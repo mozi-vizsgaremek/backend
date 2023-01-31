@@ -5,7 +5,7 @@ export type Config = {
     port: number
 }
 
-function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|undefined): T {
+function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|undefined = undefined): T {
     const nkey: string = key.toUpperCase();
 
     if (!(nkey in process.env))
@@ -20,5 +20,5 @@ function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|und
 }
 
 export const config: Config = {
-    port: readVal('port', Number, 8080)
+    port: readVal('port', Number)
 }
