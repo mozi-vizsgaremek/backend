@@ -1,13 +1,14 @@
-import { fastify, FastifyReply, FastifyRequest } from 'fastify';
-import { config } from './config';
+import { config } from './config'
+import { fastify } from 'fastify'
+import { join } from 'path'
+import autoload from '@fastify/autoload'
 
 const server = fastify();
 
-server.get('/', (request: FastifyRequest, reply: FastifyReply) => {
-    console.log(request);
-    reply.code(418).send({ whoami: "teapot" });
+server.register(autoload, {
+  dir: join(__dirname, 'routes')
 });
 
 server.listen({ port: config.port }, () => {
-    console.log('server listening on 8080');
+    console.log(`Server listening on ${config.port}`);
 });
