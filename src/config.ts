@@ -5,8 +5,6 @@ export type Config = {
     port: number
 }
 
-console.log(process.env);
-
 function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|undefined): T {
     const nkey: string = key.toUpperCase();
 
