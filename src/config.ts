@@ -1,18 +1,21 @@
 import dotenv from 'dotenv';
-
 dotenv.config();
 
 export type Config = {
     port: number
 }
 
+console.log(process.env);
+
 function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|undefined): T {
-    if (!(key in process.env))
+    const nkey: string = key.toUpperCase();
+
+    if (!(nkey in process.env))
         if (fallback == undefined)
-            throw new Error(`Configuration key '${key}' not found in process environment.`); // halt and catch fire
+            throw new Error(`Configuration key '${nkey}' not found in process environment.`); // halt and catch fire
         else return fallback;
 
-    return caster(process.env[key]!);
+    return caster(process.env[nkey]!);
 }
 
 export const config: Config = {
