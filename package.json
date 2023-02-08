@@ -15,6 +15,7 @@
     "@fastify/autoload": "^5.7.1",
     "@fastify/type-provider-typebox": "^2.4.0",
     "@sinclair/typebox": "^0.25.21",
+    "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "fastify": "^4.12.0",
     "slonik": "^33.0.6"
