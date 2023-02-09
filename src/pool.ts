@@ -7,7 +7,9 @@ export async function decoratePool(server: FastifyInstance) {
 
   server.decorate('pool', pool);
 
-  server.addHook('onRequest', (req: FastifyRequest, _res: FastifyReply) => {
+  server.addHook('onRequest', (req: FastifyRequest, _res: FastifyReply, done: Function) => {
     req.pool = pool;
+
+    done();
   });
 }
