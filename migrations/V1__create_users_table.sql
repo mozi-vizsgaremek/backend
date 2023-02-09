@@ -9,5 +9,5 @@ create table users (
     role ROLE NOT NULL DEFAULT 'customer',
     totp_secret TEXT,
 
-    CONSTRAINT username_regexp CHECK (username ~ '^([A-Za-z0-9_-]){8,32}$')
+    CONSTRAINT username_regexp CHECK (username ~ '^([A-Za-z0-9_-]){4,32}$')
 )
