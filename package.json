@@ -22,7 +22,8 @@
     "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "fastify": "^4.12.0",
-    "slonik": "^33.0.6"
+    "slonik": "^33.0.6",
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@tsconfig/node18-strictest": "^1.0.0",
