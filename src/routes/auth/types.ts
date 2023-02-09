@@ -1,8 +1,8 @@
-import { Type } from '@sinclair/typebox'
+import { Static, Type } from '@sinclair/typebox'
 import { z } from 'zod';
 
 export const User = z.object({
-  id: z.string().uuid(),
+  id: z.optional(z.string().uuid()),
   username: z.string().min(4).max(32),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
@@ -24,4 +24,4 @@ export const RegisterUserSchema = {
   })
 }
 
-export type RegisterUserSchema = typeof RegisterUserSchema;
+export type RegisterUserSchema = Static<typeof RegisterUserSchema.body>;
