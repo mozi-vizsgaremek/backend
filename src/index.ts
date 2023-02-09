@@ -10,6 +10,7 @@ import swaggerUi from '@fastify/swagger-ui';
 
 import type { DatabasePool } from 'slonik';
 import { decoratePool } from './pool'
+import { decorateUtils } from './utils'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -45,6 +46,7 @@ async function init() {
 
   // set up database pool
   await decoratePool(server);
+  decorateUtils(server);
 
   // load routes
   server.register(autoload, {
