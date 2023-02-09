@@ -2,10 +2,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export type Config = {
-    port: number
+    port: number,
+    postgresConnectionString: string
 }
 
-function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|undefined = undefined): T {
+function readVal<T>(key: string, caster: (x: string) => T, fallback: T|undefined = undefined): T {
     const nkey: string = key.toUpperCase();
 
     if (!(nkey in process.env))
@@ -20,5 +21,6 @@ function readVal<T>(key: keyof Config, caster: (x: string) => T, fallback: T|und
 }
 
 export const config: Config = {
-    port: readVal('port', Number)
+    port: readVal('port', Number),
+    postgresConnectionString: readVal('postgres_conn_str', String)
 }
