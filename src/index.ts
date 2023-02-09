@@ -8,32 +8,54 @@ import autoload from '@fastify/autoload'
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
-const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
+import { createPool, DatabasePool } from 'slonik';
 
-// :)
-// @ts-expect-error
-server.register(swagger, {
-  swagger: {
-    info: {
-      title: 'Mozi vizsgaremek',
-      description: 'Karsza Levente, Klement Szabolcs, Papp Dávid'
+declare module 'fastify' {
+  interface FastifyInstance {
+    pool: DatabasePool
+  }
+
+  interface FastifyRequest {
+    pool: DatabasePool
+  }
+}
+
+async function init() {
+  const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
+
+  // :)
+  // @ts-expect-error
+  server.register(swagger, {
+    swagger: {
+      info: {
+        title: 'Mozi vizsgaremek',
+        description: 'Karsza Levente, Klement Szabolcs, Papp Dávid'
+      }
     }
-  }
-});
+  });
 
-server.register(swaggerUi, {
-  routePrefix: '/docs',
-  uiConfig: {
-    docExpansion: 'full',
-    deepLinking: false
-  }
-});
+  server.register(swaggerUi, {
+    routePrefix: '/docs',
+    uiConfig: {
+      docExpansion: 'full',
+      deepLinking: false
+    }
+  });
 
-// load routes
-server.register(autoload, {
-  dir: join(__dirname, 'routes')
-});
+  // set up database pool
+  const pool = await createPool(config.postgresConnectionString);
 
-server.listen({ port: config.port }, () => {
-    console.log(`Server listening on ${config.port}`);
-});
+  server.decorate('pool', pool);
+  server.decorateRequest('pool', pool);
+
+  // load routes
+  server.register(autoload, {
+    dir: join(__dirname, 'routes')
+  });
+
+  server.listen({ port: config.port }, () => {
+      console.log(`Server listening on ${config.port}`);
+  });
+}
+
+init();
