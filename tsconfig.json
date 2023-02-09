@@ -1,6 +1,7 @@
 {
-    "compilerOptions": {
-        "outDir": "build"
-    },
-    "extends": "@tsconfig/node18-strictest/tsconfig.json"
+  "compilerOptions": {
+    "outDir": "build",
+    "strict": true
+  },
+  "extends": "@tsconfig/node18-strictest/tsconfig.json"
 }
