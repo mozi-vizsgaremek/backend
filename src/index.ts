@@ -10,6 +10,8 @@ import swaggerUi from '@fastify/swagger-ui';
 
 const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
 
+// :)
+// @ts-expect-error
 server.register(swagger, {
   swagger: {
     info: {
@@ -27,6 +29,7 @@ server.register(swaggerUi, {
   }
 });
 
+// load routes
 server.register(autoload, {
   dir: join(__dirname, 'routes')
 });
