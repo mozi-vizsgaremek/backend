@@ -8,7 +8,8 @@ import autoload from '@fastify/autoload'
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
-import { createPool, DatabasePool } from 'slonik';
+import type { DatabasePool } from 'slonik';
+import { decoratePool } from './pool'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -43,10 +44,7 @@ async function init() {
   });
 
   // set up database pool
-  const pool = await createPool(config.postgresConnectionString);
-
-  server.decorate('pool', pool);
-  server.decorateRequest('pool', pool);
+  await decoratePool(server);
 
   // load routes
   server.register(autoload, {
@@ -54,7 +52,7 @@ async function init() {
   });
 
   server.listen({ port: config.port }, () => {
-      console.log(`Server listening on ${config.port}`);
+    console.log(`Server listening on ${config.port}`);
   });
 }
 
