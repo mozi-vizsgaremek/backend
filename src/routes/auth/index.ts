@@ -1,7 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { Type } from '@sinclair/typebox'
 
-
 export default (server: FastifyInstance, _opts: null, done: Function) => {
     server.post('/register', {
         schema: {
@@ -12,7 +11,7 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
                 password: Type.String()
             })
         }
-    }, (_request: FastifyRequest, reply: FastifyReply) => {
+    }, async (_request: FastifyRequest, reply: FastifyReply) => {
         reply.code(418).send({ whoami: "teapot" });
     });
 
