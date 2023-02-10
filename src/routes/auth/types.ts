@@ -29,13 +29,28 @@ export const RegisterUserSchema = {
   }),
   response: {
     200: Type.Object({
-      jwt: Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' })
+      refreshToken: Type.String({ description: 'The refresh token used to get a new access token' }),
+      accessToken: Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' })
     }, { description: 'Registration successful.' }),
     400: mkError({ description: 'Username already taken.' })
   }
 }
 
 export type RegisterUserSchema = Static<typeof RegisterUserSchema.body>;
+
+// type aliases
+
+export type RefreshToken = string;
+export type AccessToken = string;
+
+export type TokenPayload = {
+  id: string, // user uuid
+  type: string
+}
+
+export type RefreshTokenPayload = TokenPayload & {
+  type: 'refresh'
+}
 
 // service function results
 
