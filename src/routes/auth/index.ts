@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply } from "fastify";
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
 import { RegisterUserSchema, UserServiceResult } from "./types";
@@ -14,10 +14,11 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
     const res = await s.createUser(req.body);
 
     return match(res)
-    .with(UserServiceResult.ErrorUsernameTaken, 
-      () => rep.error(400, 'Username taken', 'Username is already taken.'))
-    .with(UserServiceResult.Ok, 
-      () => rep.code(200).send());
+      .with(UserServiceResult.ErrorUsernameTaken, 
+        () => rep.error(400, 'Username taken', 'Username is already taken.'))
+      .with(UserServiceResult.Ok, 
+        () => rep.code(200).send())
+      .run();
   });
 
   done();
