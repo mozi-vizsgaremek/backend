@@ -22,6 +22,7 @@
     "argon2": "^0.30.3",
     "dotenv": "^16.0.3",
     "fastify": "^4.12.0",
+    "jsonwebtoken": "^9.0.0",
     "slonik": "^33.0.6",
     "ts-pattern": "^4.1.4",
     "zod": "^3.20.6"
