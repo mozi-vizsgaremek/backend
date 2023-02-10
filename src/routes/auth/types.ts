@@ -1,5 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
 import { z } from 'zod';
+import { mkError } from '../../types';
 
 // model types
 
@@ -18,12 +19,20 @@ export type User = z.infer<typeof User>;
 // schemas
 
 export const RegisterUserSchema = {
+  description: 'Register a new user',
+  tags: [ 'auth' ],
   body: Type.Object({
     username: Type.String({ minLength: 4, maxLength: 32 }),
     firstName: Type.String({ minLength: 1 }),
     lastName: Type.String({ minLength: 1 }),
     password: Type.String({ minLength: 1 })
-  })
+  }),
+  response: {
+    200: Type.Object({
+      jwt: Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' })
+    }, { description: 'Registration successful.' }),
+    400: mkError({ description: 'Username already taken.' })
+  }
 }
 
 export type RegisterUserSchema = Static<typeof RegisterUserSchema.body>;

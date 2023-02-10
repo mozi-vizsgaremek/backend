@@ -1,4 +1,4 @@
-import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
 
 import { config } from './config'
 import { fastify } from 'fastify'
@@ -23,15 +23,28 @@ declare module 'fastify' {
 }
 
 async function init() {
-  const server = fastify().withTypeProvider<TypeBoxTypeProvider>();
+  const server = fastify()
+    .withTypeProvider<TypeBoxTypeProvider>()
+    .setValidatorCompiler(TypeBoxValidatorCompiler);
 
-  // :)
-  // @ts-expect-error
   server.register(swagger, {
-    swagger: {
+    openapi: {
       info: {
         title: 'Mozi vizsgaremek',
-        description: 'Karsza Levente, Klement Szabolcs, Papp Dávid'
+        description: 'Karsza Levente, Klement Szabolcs, Papp Dávid',
+        version: '0.0.1'
+      },
+      tags: [
+        { name: 'auth', description: 'Authentication' }
+      ],
+      components: {
+        securitySchemes: {
+          bearer: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT'
+          }
+        }
       }
     }
   });
@@ -46,6 +59,8 @@ async function init() {
 
   // set up database pool
   await decoratePool(server);
+
+  // register utilities
   decorateUtils(server);
 
   // load routes
