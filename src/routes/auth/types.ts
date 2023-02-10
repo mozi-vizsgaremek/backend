@@ -1,6 +1,8 @@
 import { Static, Type } from '@sinclair/typebox'
 import { z } from 'zod';
 
+// model types
+
 export const User = z.object({
   id: z.optional(z.string().uuid()),
   username: z.string().min(4).max(32),
@@ -25,3 +27,10 @@ export const RegisterUserSchema = {
 }
 
 export type RegisterUserSchema = Static<typeof RegisterUserSchema.body>;
+
+// service function results
+
+export enum UserServiceResult { 
+  ErrorUsernameTaken, 
+  Ok 
+}

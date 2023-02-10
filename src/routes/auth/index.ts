@@ -1,22 +1,23 @@
 import type { FastifyInstance, FastifyReply } from "fastify";
-import type { FastifyRequestTypebox } from "../../types";
+import { match, P } from 'ts-pattern';
 
-import { RegisterUserSchema } from "./types";
-import * as m from './model';
+import type { FastifyRequestTypebox } from "../../types";
+import { RegisterUserSchema, UserServiceResult } from "./types";
 import * as s from './service';
 
 export default (server: FastifyInstance, _opts: null, done: Function) => {
 
   server.post('/register', {
     schema: RegisterUserSchema
-  }, async (req: FastifyRequestTypebox<typeof RegisterUserSchema>, reply: FastifyReply) => {
+  }, async (req: FastifyRequestTypebox<typeof RegisterUserSchema>, rep: FastifyReply) => {
 
-    if (await m.userExists(req.body.username))
-      return reply.error(400, 'Duplicate username', 'Another user is already using this username.');
+    const res = await s.createUser(req.body);
 
-    await s.createUser(req.body);
-
-    return reply.code(200).send();
+    return match(res)
+    .with(UserServiceResult.ErrorUsernameTaken, 
+      () => rep.error(400, 'Username taken', 'Username is already taken.'))
+    .with(UserServiceResult.Ok, 
+      () => rep.code(200).send());
   });
 
   done();
