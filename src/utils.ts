@@ -18,3 +18,7 @@ export function decorateUtils(server: FastifyInstance) {
     done();
   });
 }
+
+export function isString(data: any): data is string {
+  return typeof data === 'string';
+}
