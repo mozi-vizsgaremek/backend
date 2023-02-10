@@ -27,7 +27,7 @@ Assuming your database uses the default credentials provided in the docker comma
 TODO: create a javascript wrapper around this command, that reads the config file automatically
 
 ```bash
-docker run --network=host -v $PWD/migrations:/sql flyway/flyway:9.8.1 -user=vizsgaremek -password=vizsgaremek -url="jdbc:postgresql://localhost:5432/vizsgaremek" -locations=filesystem:/sql migrate
+docker run --network=host -v $PWD/migrations:/sql --rm flyway/flyway:9.8.1 -user=vizsgaremek -password=vizsgaremek -url="jdbc:postgresql://localhost:5432/vizsgaremek" -locations=filesystem:/sql migrate
 ```
 
 ## Installing dependencies
