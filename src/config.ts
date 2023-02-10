@@ -3,24 +3,24 @@ dotenv.config();
 
 export type Config = {
     port: number,
-    postgresConnectionString: string
+    postgresConnectionString: string,
+    jwtSecret: string
 }
 
 function readVal<T>(key: string, caster: (x: string) => T, fallback: T|undefined = undefined): T {
-    const nkey: string = key.toUpperCase();
-
-    if (!(nkey in process.env))
+    if (!(key in process.env))
         if (fallback == undefined)
-            throw new Error(`Configuration key '${nkey}' not found in process environment.`); // halt and catch fire
+            throw new Error(`Configuration key '${key}' not found in process environment.`); // halt and catch fire
         else {
-            console.log(`Using fallback value for configuration key '${nkey}'`);
+            console.log(`Using fallback value for configuration key '${key}'`);
             return fallback;
         }
 
-    return caster(process.env[nkey]!);
+    return caster(process.env[key]!);
 }
 
 export const config: Config = {
-    port: readVal('port', Number),
-    postgresConnectionString: readVal('postgres_conn_str', String)
+    port: readVal('PORT', Number, 8080),
+    postgresConnectionString: readVal('POSTGRES_CONN_STR', String),
+    jwtSecret: readVal('JWT_SECRET', String)
 }
