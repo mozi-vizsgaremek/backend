@@ -36,6 +36,9 @@ export type AccessToken = Static<typeof AccessToken>;
 export const TotpCode = Type.String({ minLength: 6, maxLength: 6, pattern: '^[0-9]{6}$' });
 export type TotpCode = Static<typeof TotpCode>;
 
+export const TotpSecret = Type.String();
+export type TotpSecret = Static<typeof TotpSecret>;
+
 export const RegisterSchema = {
   summary: 'Register a new user',
   tags: [ 'auth' ],
@@ -105,6 +108,8 @@ export const EnableTotpSchema = {
   }
 }
 
+// export type EnableTotpSchema = Static<typeof EnableTotpSchema>;
+
 export const VerifyTotpSchema = {
   summary: 'Complete TOTP onboarding',
   tags: [ 'auth' ],
@@ -115,14 +120,19 @@ export const VerifyTotpSchema = {
   })
 }
 
+export type VerifyTotpSchema = Static<typeof VerifyTotpSchema.body>;
+
 export const DisableTotpSchema = {
   summary: 'Disable TOTP two-factor authentication',
   tags: [ 'auth' ],
   security: [ bearerSecurity ],
-  body: {
-
-  }
+  body: Type.Object({
+    password: Password,
+    totp: TotpCode
+  })
 }
+
+export type DisableTotpSchema = Static<typeof DisableTotpSchema.body>;
 
 // type aliases
 
@@ -156,6 +166,10 @@ export enum UserServiceResult {
   ErrorInvalidUsername,
   ErrorInvalidRefreshToken,
   ErrorInvalidAccessToken,
-  ErrorUserNotFound, 
+  ErrorUserNotFound,
+  ErrorTotpNotEnabled,
+  ErrorTotpAlreadyEnabled,
+  ErrorTotpSecretNotFound,
+  ErrorInvalidTotp, 
   Ok 
 }

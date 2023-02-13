@@ -1,6 +1,6 @@
 import { sql } from '../../types';
 import { pool } from '../../pool';
-import { User } from './types';
+import { TotpSecret, User } from './types';
 
 export async function getUser(id: string): Promise<User|null> {
   return pool.maybeOne(sql.type(User)
@@ -35,4 +35,14 @@ export async function hasTotpEnabled(id: string): Promise<boolean> {
 export async function hasTotpSecret(id: string): Promise<boolean> {
   return pool.one(sql.typeAlias('bool')
                   `SELECT totp_secret IS NOT NULL FROM users WHERE id = ${id}`);
+}
+
+export async function setTotpSecret(user: User, secret: TotpSecret) {
+  return pool.query(sql.unsafe
+                    `UPDATE user SET totp_secret = ${secret} WHERE id = ${user.id!}`);
+}
+
+export async function setTotpStatus(user: User, status: boolean) {
+  return pool.query(sql.unsafe
+                   `UPDATE user SET totp_enabled = ${status} WHERE id = ${user.id!}`);
 }

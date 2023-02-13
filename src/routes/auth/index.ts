@@ -2,8 +2,9 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult } from "./types";
+import { DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
 import * as s from './service';
+import { issueAccessToken } from "./jwt";
 
 import Result = UserServiceResult; 
 
@@ -48,7 +49,7 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.post('/refresh', {
     schema: RefreshSchema
   }, async (req: FastifyRequestTypebox<typeof RefreshSchema>, rep: FastifyReply) => {
-    const res = await s.issueAccessToken(req.body.refreshToken);
+    const res = await issueAccessToken(req.body.refreshToken);
 
     console.log(res);
 
@@ -62,6 +63,24 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
           accessToken: token!
         }))
       .run();
+  });
+
+  server.post('/totp', {
+    schema: EnableTotpSchema
+  }, async (req: FastifyRequestTypebox<typeof EnableTotpSchema>, rep: FastifyReply) => {
+       
+  });
+
+  server.put('/totp', {
+    schema: VerifyTotpSchema
+  }, async (req: FastifyRequestTypebox<typeof VerifyTotpSchema>, rep: FastifyReply) => {
+    
+  });
+
+  server.delete('/totp', {
+    schema: DisableTotpSchema
+  }, async (req: FastifyRequestTypebox<typeof DisableTotpSchema>, rep: FastifyReply) => {
+    
   });
 
   done();

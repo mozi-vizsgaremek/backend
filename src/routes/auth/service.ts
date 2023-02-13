@@ -1,4 +1,6 @@
-import { LoginSchema, RegisterSchema, Tokens, UserServiceResult } from "./types";
+import { LoginSchema, RegisterSchema, VerifyTotpSchema, 
+         DisableTotpSchema, Tokens, UserServiceResult, 
+         User, TotpSecret } from "./types";
 import argon from 'argon2';
 import { match, P } from 'ts-pattern';
 
@@ -6,6 +8,7 @@ import { issueTokens } from "./jwt";
 import * as m from './model';
 
 import Result = UserServiceResult;
+import { generateTotpSecret, verifyTotpCode } from "../../totp";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))
@@ -50,3 +53,43 @@ export async function login(input: LoginSchema): Promise<[Result, Tokens | null]
     .run() as [Result, Tokens | null];
 }
 
+export async function enableTotp(user: User): Promise<[Result, TotpSecret | null]> {
+  if (user.totpEnabled)
+    return [Result.ErrorTotpAlreadyEnabled, null];
+
+  const secret = generateTotpSecret();
+  await m.setTotpSecret(user, secret);
+
+  return [Result.Ok, secret];
+}
+
+export async function verifyTotp(user: User, input: VerifyTotpSchema): Promise<Result> {
+  if (!await argon.verify(user.password, input.password))
+    return Result.ErrorInvalidPassword;
+  
+  if (!user.totpSecret)
+    return Result.ErrorTotpSecretNotFound;
+
+  if (!verifyTotpCode(input.totp, user.totpSecret!))
+    return Result.ErrorInvalidTotp;
+
+  await m.setTotpStatus(user, true);
+
+  return Result.Ok;
+}
+
+export async function disableTotp(user: User, input: DisableTotpSchema): Promise<Result> {
+  // TODO: abstract duplicate code away
+  if (!await argon.verify(user.password, input.password))
+    return Result.ErrorInvalidPassword;
+  
+  if (!user.totpSecret) return Result.ErrorTotpSecretNotFound;
+  if (!user.totpEnabled) return Result.ErrorTotpNotEnabled;
+
+  if (!verifyTotpCode(input.totp, user.totpSecret!))
+    return Result.ErrorInvalidTotp;
+
+  await m.setTotpStatus(user, false);
+
+  return Result.Ok;
+}
