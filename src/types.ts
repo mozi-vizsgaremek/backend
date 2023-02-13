@@ -35,3 +35,4 @@ export const Error = mkError();
 
 export type Error = Static<typeof Error>;
 
+export const bearerSecurity = { "bearer": [] };
