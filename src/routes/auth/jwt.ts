@@ -86,8 +86,7 @@ export async function validateAccessToken(access: AccessToken): Promise<User|nul
       firstName: accessPayload.firstName,
       lastName: accessPayload.lastName,
       role: accessPayload.role,
-      password: '',
-      totpSecret: ''
+      password: ''
     }
   } catch (_err) {
     return null;

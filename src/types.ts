@@ -20,6 +20,7 @@ export const sql = createSqlTag({
       id: z.number(),
     }),
     void: z.object({}).strict(),
+    bool: z.boolean()
   }
 });
 
