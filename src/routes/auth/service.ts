@@ -62,7 +62,7 @@ export async function issueTokens(user: User): Promise<[Result, Tokens | null]> 
 
   return match(access)
     .with([Result.Ok, P.select()],
-      (x) => [Result.Ok, { refresh, x }])
+      (x) => [Result.Ok, { refresh, access: x }])
     .with([P.select(), P._],
       (err) => [err, null])
     .run() as [Result, Tokens | null];
