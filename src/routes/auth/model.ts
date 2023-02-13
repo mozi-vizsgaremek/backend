@@ -26,3 +26,13 @@ export async function userExistsByNick(username: string): Promise<boolean> {
 export async function userExists(id: string): Promise<boolean> {
   return pool.exists(sql.typeAlias('void')`SELECT id FROM users WHERE id = ${id}`);  
 }
+
+export async function hasTotpEnabled(id: string): Promise<boolean> {
+  return pool.one(sql.typeAlias('bool')
+                  `SELECT totp_enabled FROM users WHERE id = ${id}`);
+}
+
+export async function hasTotpSecret(id: string): Promise<boolean> {
+  return pool.one(sql.typeAlias('bool')
+                  `SELECT totp_secret IS NOT NULL FROM users WHERE id = ${id}`);
+}
