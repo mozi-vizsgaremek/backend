@@ -26,6 +26,12 @@ export type Username = Static<typeof Username>;
 export const Password = Type.String({ minLength: 1 });
 export type Password = Static<typeof Password>;
 
+export const RefreshToken = Type.String({ description: 'The refresh token used to get a new access token' });
+export type RefreshToken = Static<typeof RefreshToken>;
+
+export const AccessToken = Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' });
+export type AccessToken = Static<typeof AccessToken>; 
+
 export const RegisterSchema = {
   summary: 'Register a new user',
   tags: [ 'auth' ],
@@ -37,8 +43,8 @@ export const RegisterSchema = {
   }),
   response: {
     200: Type.Object({
-      refreshToken: Type.String({ description: 'The refresh token used to get a new access token' }),
-      accessToken: Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' })
+      refreshToken: RefreshToken,
+      accessToken: AccessToken,
     }, { description: 'Registration successful.' }),
     400: mkError({ description: 'Username already taken.' })
   }
@@ -52,16 +58,27 @@ export const LoginSchema = {
   body: Type.Object({
     username: Username,
     password: Password
-  })
+  }),
+  response: {
+    200: Type.Object({
+      refreshToken: RefreshToken,
+      accessToken: AccessToken
+    }, { description: 'Successful login' }),
+    401: mkError({ description: 'Invalid username or password' })
+  }
 }
 
 export type LoginSchema = Static<typeof LoginSchema.body>;
 
+export const RefreshSchema = {
+  summary: 'Get a new access token',
+  tags: [ 'auth' ],
+  body: Type.Object({
+    refreshToken: Type.String({ description: "The user's refresh token" }) 
+  })
+}
 
 // type aliases
-
-export type RefreshToken = string;
-export type AccessToken = string;
 
 export type TokenPayload = {
   id: string, // user uuid
