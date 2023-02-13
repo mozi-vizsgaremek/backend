@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
 import { z } from 'zod';
-import { mkError } from '../../types';
+import { bearerSecurity, mkError } from '../../types';
 
 // model types
 
@@ -13,7 +13,7 @@ export const User = z.object({
   password: z.string(),
   role: UserRole,
   totpSecret: z.optional(z.string()),
-  totpEnabled: z.boolean().default(false)
+  totpEnabled: z.optional(z.boolean().default(false))
 });
 
 export type UserRole = z.infer<typeof UserRole>;
@@ -97,6 +97,7 @@ export type RefreshSchema = Static<typeof RefreshSchema.body>;
 export const EnableTotpSchema = {
   summary: 'Start TOTP onboarding',
   tags: [ 'auth' ],
+  security: [ bearerSecurity ],
   response: {
     200: Type.Object({
       secret: Type.String({ description: 'The TOTP shared secret' })
@@ -107,6 +108,7 @@ export const EnableTotpSchema = {
 export const VerifyTotpSchema = {
   summary: 'Complete TOTP onboarding',
   tags: [ 'auth' ],
+  security: [ bearerSecurity ],
   body: Type.Object({
     password: Password,
     totp: TotpCode
@@ -116,6 +118,7 @@ export const VerifyTotpSchema = {
 export const DisableTotpSchema = {
   summary: 'Disable TOTP two-factor authentication',
   tags: [ 'auth' ],
+  security: [ bearerSecurity ],
   body: {
 
   }
