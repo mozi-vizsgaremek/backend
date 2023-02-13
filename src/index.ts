@@ -36,7 +36,8 @@ async function init() {
         version: '0.0.1'
       },
       tags: [
-        { name: 'auth', description: 'Authentication' }
+        { name: 'auth', description: 'Authentication' },
+        { name: 'test', description: 'Testing' }
       ],
       components: {
         securitySchemes: {
