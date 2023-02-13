@@ -12,7 +12,6 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.post('/register', {
     schema: RegisterSchema
   }, async (req: FastifyRequestTypebox<typeof RegisterSchema>, rep: FastifyReply) => {
-
     const res = await s.register(req.body);
 
     return match(res)
@@ -31,7 +30,6 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.post('/login', {
     schema: LoginSchema
   }, async (req: FastifyRequestTypebox<typeof LoginSchema>, rep: FastifyReply) => {
-    
     const res = await s.login(req.body);
 
     return match(res)
@@ -50,8 +48,20 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.post('/refresh', {
     schema: RefreshSchema
   }, async (req: FastifyRequestTypebox<typeof RefreshSchema>, rep: FastifyReply) => {
+    const res = await s.issueAccessToken(req.body.refreshToken);
 
+    console.log(res);
 
+    return match(res)
+      .with([Result.ErrorInvalidRefreshToken, P._],
+        () => rep.error(401, 'Unauthorized', 'Invalid refresh token'))
+      .with([Result.ErrorUserNotFound, P._],
+        () => rep.error(404, 'Not found', 'User not found'))
+      .with([Result.Ok, P.select()],
+        (token) => rep.code(200).send({
+          accessToken: token!
+        }))
+      .run();
   });
 
   done();
