@@ -20,7 +20,7 @@ export type User = z.infer<typeof User>;
 
 // schemas
 
-export const Username = Type.String({ minLength: 4, maxLength: 32 });
+export const Username = Type.String({ minLength: 4, maxLength: 32, pattern: '^([A-Za-z0-9_-]){4,32}$' });
 export type Username = Static<typeof Username>; 
 
 export const Password = Type.String({ minLength: 1 });
