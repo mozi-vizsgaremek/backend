@@ -23,7 +23,7 @@ export type User = z.infer<typeof User>;
 export const Username = Type.String({ minLength: 4, maxLength: 32, pattern: '^([A-Za-z0-9_-]){4,32}$' });
 export type Username = Static<typeof Username>; 
 
-export const Password = Type.String({ minLength: 8, maxLength: 256, pattern: '^[A-Za-z0-9!@#$%&^\W]{8,256}$' });
+export const Password = Type.String({ minLength: 8, maxLength: 256, pattern: '^[A-Za-z0-9!@#$%&^_\W]{8,256}$' });
 export type Password = Static<typeof Password>;
 
 export const RefreshToken = Type.String({ description: 'The refresh token used to get a new access token' });
