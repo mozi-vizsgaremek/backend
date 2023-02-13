@@ -11,6 +11,7 @@ import swaggerUi from '@fastify/swagger-ui';
 import type { DatabasePool } from 'slonik';
 import { decoratePool } from './pool'
 import { decorateUtils } from './utils'
+import { registerAuthHook } from './routes/auth/hook'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -62,6 +63,9 @@ async function init() {
 
   // register utilities
   decorateUtils(server);
+
+  // add authentication hook
+  registerAuthHook(server);
 
   // load routes
   server.register(autoload, {
