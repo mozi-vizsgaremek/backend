@@ -17,7 +17,8 @@ export async function register(input: RegisterSchema): Promise<[Result, Tokens |
     password: await argon.hash(input.password),
     firstName: input.firstName,
     lastName: input.lastName,
-    role: 'customer'
+    role: 'customer',
+    totpEnabled: false
   });
 
   const user = await m.getUserByNick(input.username);
