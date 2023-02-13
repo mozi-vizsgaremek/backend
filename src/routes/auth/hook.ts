@@ -10,8 +10,7 @@ declare module 'fastify' {
 
 export function registerAuthHook(server: FastifyInstance) {
   server.addHook('onRequest', async (req: FastifyRequest, rep: FastifyReply) => {
-    if (req.routerPath.match(/^\/(auth|docs)\/.*/))
-      return; // do not require auth for authentication and documentation endpoints
+    if (!req.routeSchema.security) return;
     
     if (!req.headers.authorization)
       return rep.error(400, 'Missing header', 'Authorizaion header not found in request');
