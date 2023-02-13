@@ -23,7 +23,7 @@ export const sql = createSqlTag({
   }
 });
 
-export function mkError(opts: ObjectOptions = { description: 'Generic error'}) {
+export function mkError(opts: ObjectOptions = { description: 'Generic error' }) {
   return Type.Object({
     statusCode: Type.Number({ description: 'Identical to HTTP status code' }),
     error: Type.String({ description: 'Short description of error (validator errors describe the status code instead)'}),
