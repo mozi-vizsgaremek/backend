@@ -15,6 +15,7 @@ specifiers:
   jsonwebtoken: ^9.0.0
   nodemon: ^2.0.20
   slonik: ^33.0.6
+  slonik-interceptor-field-name-transformation: ^1.6.5
   ts-node: ^10.9.1
   ts-pattern: ^4.1.4
   typescript: ^4.9.5
@@ -31,6 +32,7 @@ dependencies:
   fastify: 4.12.0
   jsonwebtoken: 9.0.0
   slonik: 33.0.6
+  slonik-interceptor-field-name-transformation: 1.6.5_slonik@33.0.6
   ts-pattern: 4.1.4
   zod: 3.20.6
 
@@ -417,6 +419,11 @@ packages:
     engines: {node: '>=0.3.0'}
     dev: false
 
+  /camelcase/6.3.0:
+    resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
+    engines: {node: '>=10'}
+    dev: false
+
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -469,6 +476,11 @@ packages:
   /cookie/0.5.0:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
+    dev: false
+
+  /core-js/3.27.2:
+    resolution: {integrity: sha512-9ashVQskuh5AZEZ1JdQWp1GqSoC1e1G87MzRqg2gIfVAQ7Qn9K+uFj8EcniUFA4P2NLZfV+TOlX1SzoKfo+s7w==}
+    requiresBuild: true
     dev: false
 
   /create-require/1.1.1:
@@ -1533,6 +1545,17 @@ packages:
     dependencies:
       semver: 7.0.0
     dev: true
+
+  /slonik-interceptor-field-name-transformation/1.6.5_slonik@33.0.6:
+    resolution: {integrity: sha512-SF7EenJQDKQBrMnnrvFPhZu2W9d8I9Egajw7hzemklqwboA7yK12jtSqKOHiFPpacH0lVP1xHdUh4aZaZKmbYw==}
+    engines: {node: '>=8.0'}
+    peerDependencies:
+      slonik: '>=27.0.0'
+    dependencies:
+      camelcase: 6.3.0
+      core-js: 3.27.2
+      slonik: 33.0.6
+    dev: false
 
   /slonik/33.0.6:
     resolution: {integrity: sha512-tiZ0yhaMsJCirm9JVl9esduoHcm0SkYqi6yQz0dDCkSdlNiU+mokr6uuDi5a4kzOXu1/FuegBbSoXNLNxCwZoQ==}
