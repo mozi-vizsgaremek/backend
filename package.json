@@ -25,6 +25,7 @@
     "jsonwebtoken": "^9.0.0",
     "slonik": "^33.0.6",
     "slonik-interceptor-field-name-transformation": "^1.6.5",
+    "speakeasy": "^2.0.0",
     "ts-pattern": "^4.1.4",
     "zod": "^3.20.6"
   },
