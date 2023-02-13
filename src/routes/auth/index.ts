@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { LoginSchema, RegisterSchema, UserServiceResult } from "./types";
+import { LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult } from "./types";
 import * as s from './service';
 
 import Result = UserServiceResult; 
@@ -22,8 +22,8 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
         () => rep.error(500, 'Internal server error', 'Unknown error occurred'))
       .with([Result.Ok, P.select()], 
         (tokens) => rep.code(200).send({
-          refreshToken: tokens![0],
-          accessToken: tokens![1]
+          refreshToken: tokens!.access,
+          accessToken: tokens!.access
         }))
       .run();
   });
@@ -37,12 +37,21 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
     return match(res)
       .with([P.union(Result.ErrorInvalidUsername, Result.ErrorInvalidPassword), P._],
         () => rep.error(401, 'Invalid credentials', 'Invalid username or password'))
+      .with([P._, null], 
+        () => rep.error(500, 'Internal server error', 'Unknown internal error')) 
       .with([Result.Ok, P.select()],
         (tokens) => rep.code(200).send({
-          refreshToken: tokens![0],
-          accessToken: tokens![1]
+          refreshToken: tokens!.refresh,
+          accessToken: tokens!.access
         }))
       .run();
+  });
+
+  server.post('/refresh', {
+    schema: RefreshSchema
+  }, async (req: FastifyRequestTypebox<typeof RefreshSchema>, rep: FastifyReply) => {
+
+
   });
 
   done();

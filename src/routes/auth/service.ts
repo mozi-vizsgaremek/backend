@@ -2,17 +2,19 @@ import { AccessToken, AccessTokenPayload, LoginSchema, RefreshToken, RefreshToke
 import { config } from '../../config';
 import argon from 'argon2';
 import { sign, verify } from 'jsonwebtoken';
+import { match, P } from 'ts-pattern';
 
 import * as m from './model';
 import { isString } from "../../utils";
 
 import Result = UserServiceResult;
 
-// TODO: replace with object?
-type TokenPair = [RefreshToken, AccessToken];
+export type Tokens = {
+  refresh: string,
+  access: string
+};
 
-export async function register(input: RegisterSchema): 
-  Promise<[Result.ErrorUsernameTaken | Result.Ok, TokenPair | null]> {
+export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))
     return [Result.ErrorUsernameTaken, null];  
 
@@ -26,12 +28,17 @@ export async function register(input: RegisterSchema):
   });
 
   const user = await m.getUserByNick(input.username);
-  return [Result.Ok, await issueTokens(user!)];
+  const tokens = await issueTokens(user!);
+
+  return match(tokens)
+    .with([Result.Ok, P.select()],
+      (x) => [Result.Ok, x])
+    .with([P.select(), P._],
+      (err) => [err, null])
+    .run() as [Result, Tokens | null];
 }
 
-export async function login(input: LoginSchema): 
-  Promise<[Result.ErrorInvalidUsername | Result.ErrorInvalidPassword | Result.Ok
-          , TokenPair | null]> {
+export async function login(input: LoginSchema): Promise<[Result, Tokens | null]> {
   const user = await m.getUserByNick(input.username);
   if (user == null) 
     return [Result.ErrorInvalidUsername, null];
@@ -39,14 +46,26 @@ export async function login(input: LoginSchema):
   if (!await argon.verify(user.password, input.password))
     return [Result.ErrorInvalidPassword, null];
 
-  return [Result.Ok, await issueTokens(user)];
+  const tokens = await issueTokens(user!);
+
+  return match(tokens)
+    .with([Result.Ok, P.select()],
+      (x) => [Result.Ok, x!])
+    .with([P.select(), P._],
+      (err) => [err, null])
+    .run() as [Result, Tokens | null];
 }
 
-export async function issueTokens(user: User): Promise<TokenPair> {
+export async function issueTokens(user: User): Promise<[Result, Tokens | null]> {
   const refresh = await issueRefreshToken(user);
   const access = await issueAccessToken(refresh);
 
-  return [refresh, access]; 
+  return match(access)
+    .with([Result.Ok, P.select()],
+      (x) => [Result.Ok, { refresh, x }])
+    .with([P.select(), P._],
+      (err) => [err, null])
+    .run() as [Result, Tokens | null];
 }
 
 export async function issueRefreshToken(user: User): Promise<RefreshToken> {
@@ -72,19 +91,17 @@ export async function validateRefreshToken(refresh: RefreshToken): Promise<Refre
   }
 }
 
-export async function issueAccessToken(refresh: RefreshToken): Promise<AccessToken> {
+export async function issueAccessToken(refresh: RefreshToken): Promise<[Result, AccessToken | null]> {
   const token = await validateRefreshToken(refresh);
 
   if (token === null)
-    throw new Error('Invalid refresh token'); // TODO: replace with specific error class
+    return [Result.ErrorInvalidRefreshToken, null];  
 
   const user = await m.getUser(token.id);
   if (user === null)
-    throw new Error('No user with the corresponding ID found'); // TODO: replace with specific error class
+    return [Result.ErrorUserNotFound, null];
 
-  console.log(user);
-
-  return sign({
+  const access = sign({
     id: user.id,
     type: 'access',
     username: user.username,
@@ -95,6 +112,8 @@ export async function issueAccessToken(refresh: RefreshToken): Promise<AccessTok
     issuer: config.jwtIssuer,
     expiresIn: config.accessTokenExpiration
   });
+
+  return [Result.Ok, access];
 }
 
 export async function validateAccessToken(access: AccessToken): Promise<User|null> {

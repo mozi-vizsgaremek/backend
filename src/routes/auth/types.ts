@@ -76,7 +76,9 @@ export const RefreshSchema = {
   body: Type.Object({
     refreshToken: Type.String({ description: "The user's refresh token" }) 
   })
-}
+};
+
+export type RefreshSchema = Static<typeof RefreshSchema.body>;
 
 // type aliases
 
@@ -103,6 +105,8 @@ export enum UserServiceResult {
   ErrorUsernameTaken,
   ErrorInvalidPassword,
   ErrorInvalidUsername,
-  ErrorInvalidToken, 
+  ErrorInvalidRefreshToken,
+  ErrorInvalidAccessToken,
+  ErrorUserNotFound, 
   Ok 
 }
