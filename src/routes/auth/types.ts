@@ -4,28 +4,36 @@ import { mkError } from '../../types';
 
 // model types
 
+export const UserRole = z.enum([ 'customer', 'employee', 'manager', 'admin' ]).default('customer'); 
 export const User = z.object({
   id: z.optional(z.string().uuid()),
   username: z.string().min(4).max(32),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   password: z.string(),
-  role: z.enum([ 'customer', 'employee', 'manager', 'admin' ]).default('customer'),
+  role: UserRole,
   totpSecret: z.optional(z.string())
 });
 
+export type UserRole = z.infer<typeof UserRole>;
 export type User = z.infer<typeof User>;
 
 // schemas
 
-export const RegisterUserSchema = {
-  description: 'Register a new user',
+export const Username = Type.String({ minLength: 4, maxLength: 32 });
+export type Username = Static<typeof Username>; 
+
+export const Password = Type.String({ minLength: 1 });
+export type Password = Static<typeof Password>;
+
+export const RegisterSchema = {
+  summary: 'Register a new user',
   tags: [ 'auth' ],
   body: Type.Object({
-    username: Type.String({ minLength: 4, maxLength: 32 }),
+    username: Username,
     firstName: Type.String({ minLength: 1 }),
     lastName: Type.String({ minLength: 1 }),
-    password: Type.String({ minLength: 1 })
+    password: Password
   }),
   response: {
     200: Type.Object({
@@ -36,7 +44,19 @@ export const RegisterUserSchema = {
   }
 }
 
-export type RegisterUserSchema = Static<typeof RegisterUserSchema.body>;
+export type RegisterSchema = Static<typeof RegisterSchema.body>;
+
+export const LoginSchema = {
+  summary: 'Log in to an existing account',
+  tags: [ 'auth' ],
+  body: Type.Object({
+    username: Username,
+    password: Password
+  })
+}
+
+export type LoginSchema = Static<typeof LoginSchema.body>;
+
 
 // type aliases
 
@@ -52,9 +72,20 @@ export type RefreshTokenPayload = TokenPayload & {
   type: 'refresh'
 }
 
+export type AccessTokenPayload = TokenPayload & {
+  type: 'access',
+  username: string,
+  firstName: string,
+  lastName: string,
+  role: UserRole
+}
+
 // service function results
 
 export enum UserServiceResult { 
-  ErrorUsernameTaken, 
+  ErrorUsernameTaken,
+  ErrorInvalidPassword,
+  ErrorInvalidUsername,
+  ErrorInvalidToken, 
   Ok 
 }

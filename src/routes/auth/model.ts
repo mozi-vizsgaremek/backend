@@ -4,7 +4,7 @@ import { User } from './types';
 
 export async function getUser(id: string): Promise<User|null> {
   return pool.maybeOne(sql.type(User)
-                       `SELECT id, username FROM users WHERE id = ${id}`);
+                       `SELECT * FROM users WHERE id = ${id}`);
 }
 
 export async function getUserByNick(username: string): Promise<User|null> {
