@@ -12,7 +12,8 @@ export const User = z.object({
   lastName: z.string().min(1),
   password: z.string(),
   role: UserRole,
-  totpSecret: z.optional(z.string())
+  totpSecret: z.optional(z.string()),
+  totpEnabled: z.boolean().default(false)
 });
 
 export type UserRole = z.infer<typeof UserRole>;
@@ -31,6 +32,9 @@ export type RefreshToken = Static<typeof RefreshToken>;
 
 export const AccessToken = Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' });
 export type AccessToken = Static<typeof AccessToken>; 
+
+export const TotpCode = Type.String({ minLength: 6, maxLength: 6, pattern: '^[0-9]{6}$' });
+export type TotpCode = Static<typeof TotpCode>;
 
 export const RegisterSchema = {
   summary: 'Register a new user',
@@ -57,7 +61,8 @@ export const LoginSchema = {
   tags: [ 'auth' ],
   body: Type.Object({
     username: Username,
-    password: Password
+    password: Password,
+    totp: Type.Optional(TotpCode)
   }),
   response: {
     200: Type.Object({
@@ -87,6 +92,35 @@ export const RefreshSchema = {
 
 export type RefreshSchema = Static<typeof RefreshSchema.body>;
 
+// TODO: document TOTP onboarding process
+
+export const EnableTotpSchema = {
+  summary: 'Start TOTP onboarding',
+  tags: [ 'auth' ],
+  response: {
+    200: Type.Object({
+      secret: Type.String({ description: 'The TOTP shared secret' })
+    })
+  }
+}
+
+export const VerifyTotpSchema = {
+  summary: 'Complete TOTP onboarding',
+  tags: [ 'auth' ],
+  body: Type.Object({
+    password: Password,
+    totp: TotpCode
+  })
+}
+
+export const DisableTotpSchema = {
+  summary: 'Disable TOTP two-factor authentication',
+  tags: [ 'auth' ],
+  body: {
+
+  }
+}
+
 // type aliases
 
 export type TokenPayload = {
@@ -105,6 +139,11 @@ export type AccessTokenPayload = TokenPayload & {
   lastName: string,
   role: UserRole
 }
+
+export type Tokens = {
+  refresh: string,
+  access: string
+};
 
 // service function results
 
