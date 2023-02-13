@@ -71,11 +71,18 @@ export const LoginSchema = {
 export type LoginSchema = Static<typeof LoginSchema.body>;
 
 export const RefreshSchema = {
-  summary: 'Get a new access token',
+  summary: 'Issue a new access token',
   tags: [ 'auth' ],
   body: Type.Object({
     refreshToken: Type.String({ description: "The user's refresh token" }) 
-  })
+  }),
+  response: {
+    200: Type.Object({
+      accessToken: AccessToken
+    }, { description: 'Issued new access token' }),
+    401: mkError({ description: 'Invalid or expired refresh token' }),
+    404: mkError({ description: 'User associated with refresh token not found' })
+  }
 };
 
 export type RefreshSchema = Static<typeof RefreshSchema.body>;
