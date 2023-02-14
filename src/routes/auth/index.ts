@@ -51,8 +51,6 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   }, async (req: FastifyRequestTypebox<typeof RefreshSchema>, rep: FastifyReply) => {
     const res = await issueAccessToken(req.body.refreshToken);
 
-    console.log(res);
-
     return match(res)
       .with([Result.ErrorInvalidRefreshToken, P._],
         () => rep.error(401, 'Unauthorized', 'Invalid refresh token'))
