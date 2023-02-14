@@ -1,5 +1,5 @@
 import { generateSecret, totp } from 'speakeasy';
-import type { TotpCode, TotpSecret } from './routes/auth/types';
+import type { TotpCode, TotpSecret } from './types';
 
 export function generateTotpSecret(): string {
   return generateSecret({
