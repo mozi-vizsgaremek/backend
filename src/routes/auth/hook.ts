@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { validateAccessToken } from "./service";
+import { validateAccessToken } from "./jwt";
 import type { User } from "./types";
 
 declare module 'fastify' {
