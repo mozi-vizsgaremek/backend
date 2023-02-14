@@ -104,7 +104,8 @@ export const EnableTotpSchema = {
   response: {
     200: Type.Object({
       secret: Type.String({ description: 'The TOTP shared secret' })
-    })
+    }),
+    403: mkError({ description: 'TOTP is already enabled' })
   }
 }
 

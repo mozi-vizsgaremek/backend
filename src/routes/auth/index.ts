@@ -66,7 +66,14 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.post('/totp', {
     schema: EnableTotpSchema
   }, async (req: FastifyRequestTypebox<typeof EnableTotpSchema>, rep: FastifyReply) => {
-       
+    const res = await s.enableTotp(req.user!); 
+
+    return match(res)
+      .with([Result.ErrorTotpAlreadyEnabled, P._],
+        () => rep.error(403, 'Forbidden', 'TOTP already enabled'))
+      .with([Result.Ok, P.select()],
+        secret => rep.code(200).send({ secret }))
+      .run();
   });
 
   server.put('/totp', {
