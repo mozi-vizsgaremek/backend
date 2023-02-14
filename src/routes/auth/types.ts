@@ -1,4 +1,4 @@
-import { Static, Type } from '@sinclair/typebox'
+import { Static, Type } from '@sinclair/typebox';
 import { z } from 'zod';
 import { bearerSecurity, mkError } from '../../types';
 
@@ -99,11 +99,12 @@ export type RefreshSchema = Static<typeof RefreshSchema.body>;
 
 export const EnableTotpSchema = {
   summary: 'Start TOTP onboarding',
-  tags: [ 'auth' ],
+  tags: [ 'auth', 'totp' ],
   security: [ bearerSecurity ],
   response: {
     200: Type.Object({
-      secret: Type.String({ description: 'The TOTP shared secret' })
+      secret: Type.String({ description: 'The TOTP shared secret' }),
+      uri: Type.String({ description: 'The otpauth URI required to generate a QR code' })
     }),
     403: mkError({ description: 'TOTP is already enabled' })
   }
@@ -113,7 +114,7 @@ export const EnableTotpSchema = {
 
 export const VerifyTotpSchema = {
   summary: 'Complete TOTP onboarding',
-  tags: [ 'auth' ],
+  tags: [ 'auth', 'totp' ],
   security: [ bearerSecurity ],
   body: Type.Object({
     password: Password,
@@ -125,7 +126,7 @@ export type VerifyTotpSchema = Static<typeof VerifyTotpSchema.body>;
 
 export const DisableTotpSchema = {
   summary: 'Disable TOTP two-factor authentication',
-  tags: [ 'auth' ],
+  tags: [ 'auth', 'totp' ],
   security: [ bearerSecurity ],
   body: Type.Object({
     password: Password,

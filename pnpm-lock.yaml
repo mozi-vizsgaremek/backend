@@ -13,6 +13,7 @@ specifiers:
   argon2: ^0.30.3
   dotenv: ^16.0.3
   fastify: ^4.12.0
+  http-status-codes: ^2.2.0
   jsonwebtoken: ^9.0.0
   nodemon: ^2.0.20
   slonik: ^33.0.6
@@ -33,6 +34,7 @@ dependencies:
   argon2: 0.30.3
   dotenv: 16.0.3
   fastify: 4.12.0
+  http-status-codes: 2.2.0
   jsonwebtoken: 9.0.0
   slonik: 33.0.6
   slonik-interceptor-field-name-transformation: 1.6.5_slonik@33.0.6
@@ -834,6 +836,10 @@ packages:
       setprototypeof: 1.2.0
       statuses: 2.0.1
       toidentifier: 1.0.1
+    dev: false
+
+  /http-status-codes/2.2.0:
+    resolution: {integrity: sha512-feERVo9iWxvnejp3SEfm/+oNG517npqL2/PIA8ORjyOZjGC7TwCRQsZylciLS64i6pJ0wRYz3rkXLRwbtFa8Ng==}
     dev: false
 
   /https-proxy-agent/5.0.1:

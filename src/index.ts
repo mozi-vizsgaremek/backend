@@ -37,7 +37,8 @@ async function init() {
       },
       tags: [
         { name: 'auth', description: 'Authentication' },
-        { name: 'test', description: 'Testing' }
+        { name: 'test', description: 'Testing' },
+        { name: 'totp', description: 'TOTP Second factor' }
       ],
       components: {
         securitySchemes: {

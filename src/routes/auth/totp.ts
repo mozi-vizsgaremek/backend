@@ -1,10 +1,14 @@
 import { generateSecret, totp } from 'speakeasy';
-import type { TotpCode, TotpSecret } from './types';
+import type { TotpCode, TotpSecret, User } from './types';
 
-export function generateTotpSecret(): string {
+export function generateTotpSecret(): TotpSecret {
   return generateSecret({
     length: 32
   }).base32;
+}
+
+export function generateTotpUri(user: User, secret: TotpSecret): string {
+  return `otpauth://totp/Mozi:${user.username}?secret=${secret}&issuer=MoziBackend`;
 }
 
 export function verifyTotpCode(token: TotpCode, secret: TotpSecret): boolean {

@@ -13,16 +13,16 @@ export function registerAuthHook(server: FastifyInstance) {
     if (!req.routeSchema.security) return;
     
     if (!req.headers.authorization)
-      return rep.error(400, 'Missing header', 'Authorizaion header not found in request');
+      return rep.error(400, 'Authorizaion header not found in request');
 
     if (!req.headers.authorization.match(/^bearer/i))
-      return rep.error(400, 'Invalid header', 'Authorization header missing bearer prefix');
+      return rep.error(400, 'Authorization header missing bearer prefix');
 
     const token = req.headers.authorization.replace(/^bearer\ /i, '');
 
     const user = await validateAccessToken(token);
     if (!user)
-      return rep.error(401, 'Invalid token', 'Invalid access token'); 
+      return rep.error(401, 'Invalid access token'); 
       // TODO: return different code when token expires
 
     req.user = user;

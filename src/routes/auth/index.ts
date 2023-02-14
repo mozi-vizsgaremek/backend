@@ -3,8 +3,10 @@ import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
 import { DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
-import * as s from './service';
 import { issueAccessToken } from "./jwt";
+import { generateTotpUri } from "./totp";
+
+import * as s from './service';
 
 import Result = UserServiceResult; 
 
@@ -17,11 +19,11 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
 
     return match(res)
       .with([Result.ErrorUsernameTaken, P._], 
-        () => rep.error(400, 'Username taken', 'Username is already taken.'))
+        () => rep.error(400, 'Username is already taken.'))
       .with([P._, null],
-        () => rep.error(500, 'Internal server error', 'Unknown error occurred'))
+        () => rep.error(500, 'Unknown error occurred'))
       .with([Result.Ok, P.select()], 
-        (tokens) => rep.code(200).send({
+        (tokens) => rep.ok({
           refreshToken: tokens!.access,
           accessToken: tokens!.access
         }))
@@ -35,11 +37,11 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
 
     return match(res)
       .with([P.union(Result.ErrorInvalidUsername, Result.ErrorInvalidPassword), P._],
-        () => rep.error(401, 'Invalid credentials', 'Invalid username or password'))
+        () => rep.error(401, 'Invalid username or password'))
       .with([P._, null], 
-        () => rep.error(500, 'Internal server error', 'Unknown internal error')) 
+        () => rep.error(500, 'Unknown internal error')) 
       .with([Result.Ok, P.select()],
-        (tokens) => rep.code(200).send({
+        (tokens) => rep.ok({
           refreshToken: tokens!.refresh,
           accessToken: tokens!.access
         }))
@@ -53,11 +55,11 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
 
     return match(res)
       .with([Result.ErrorInvalidRefreshToken, P._],
-        () => rep.error(401, 'Unauthorized', 'Invalid refresh token'))
+        () => rep.error(401, 'Invalid refresh token'))
       .with([Result.ErrorUserNotFound, P._],
-        () => rep.error(404, 'Not found', 'User not found'))
+        () => rep.error(404, 'User not found'))
       .with([Result.Ok, P.select()],
-        (token) => rep.code(200).send({
+        (token) => rep.ok({
           accessToken: token!
         }))
       .run();
@@ -70,22 +72,47 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
 
     return match(res)
       .with([Result.ErrorTotpAlreadyEnabled, P._],
-        () => rep.error(403, 'Forbidden', 'TOTP already enabled'))
+        () => rep.error(403, 'TOTP already enabled'))
       .with([Result.Ok, P.select()],
-        secret => rep.code(200).send({ secret }))
+        secret => rep.ok({ 
+          secret,
+          uri: generateTotpUri(req.user, secret!)
+        }))
       .run();
   });
 
   server.put('/totp', {
     schema: VerifyTotpSchema
   }, async (req: FastifyRequestTypebox<typeof VerifyTotpSchema>, rep: FastifyReply) => {
+    const res = await s.verifyTotp(req.user, req.body);
     
+    return match(res)
+      .with(Result.ErrorInvalidPassword,
+        () => rep.error(401, 'Invalid password'))
+      .with(Result.ErrorInvalidTotp,
+        () => rep.error(403, 'Invalid TOTP token'))
+      .with(Result.ErrorTotpSecretNotFound,
+        () => rep.error(404, 'TOTP secret not found, onboarding process not started'))
+      .with(Result.Ok,
+        () => rep.ok())
+      .run();
   });
 
   server.delete('/totp', {
     schema: DisableTotpSchema
   }, async (req: FastifyRequestTypebox<typeof DisableTotpSchema>, rep: FastifyReply) => {
-    
+    const res = await s.disableTotp(req.user, req.body);
+   
+    return match(res)
+      .with(Result.ErrorInvalidPassword,
+        () => rep.error(401, 'Invalid password'))
+      .with(Result.ErrorInvalidTotp,
+        () => rep.error(403, 'Invalid TOTP token'))
+      .with(P.union(Result.ErrorTotpNotEnabled, Result.ErrorTotpSecretNotFound),
+        () => rep.error(400, 'TOTP not enabled'))
+      .with(Result.Ok,
+        () => rep.ok())
+      .run();
   });
 
   done();
