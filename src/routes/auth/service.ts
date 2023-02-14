@@ -8,7 +8,7 @@ import { issueTokens } from "./jwt";
 import * as m from './model';
 
 import Result = UserServiceResult;
-import { generateTotpSecret, verifyTotpCode } from "../../totp";
+import { generateTotpSecret, verifyTotpCode } from "./totp";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))
