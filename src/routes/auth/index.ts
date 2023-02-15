@@ -72,7 +72,14 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.put('/password', {
     schema: ChangePasswordSchema
   }, async (req: FastifyRequestTypebox<typeof ChangePasswordSchema>, rep: FastifyReply) => {
+    const res = await s.changePassword(req.user!, req.body);
 
+    return match(res)
+      .with(Result.ErrorInvalidPassword, 
+        () => rep.error(403, 'Invalid password'))
+      .with(Result.Ok,
+        () => rep.ok())
+      .run();
   });
 
   server.post('/totp', {
