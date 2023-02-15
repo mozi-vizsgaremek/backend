@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
+import { ChangePasswordSchema, DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
 import { issueAccessToken } from "./jwt";
 import { generateTotpUri } from "./totp";
 
@@ -67,6 +67,12 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
           accessToken: token!
         }))
       .run();
+  });
+
+  server.put('/password', {
+    schema: ChangePasswordSchema
+  }, async (req: FastifyRequestTypebox<typeof ChangePasswordSchema>, rep: FastifyReply) => {
+
   });
 
   server.post('/totp', {

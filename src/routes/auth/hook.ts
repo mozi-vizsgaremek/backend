@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { UserRoleLevel } from "../../types";
 import { validateAccessToken } from "./jwt";
-import { User } from "./types";
+import type { User } from "./types";
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -25,7 +25,7 @@ export function registerAuthHook(server: FastifyInstance) {
     
     // this is not typesafe whatsoever
     // incredibly fragile, but it is what it is :D
-    const minAccess = UserRoleLevel[bearerAccess[0]] ?? UserRoleLevel['admin'];
+    const minAccess = UserRoleLevel[bearerAccess[0] ?? 'admin'] ?? UserRoleLevel['admin'];
 
     if (!req.headers.authorization)
       return rep.error(400, 'Authorizaion header not found in request');
@@ -42,7 +42,7 @@ export function registerAuthHook(server: FastifyInstance) {
 
     const currentAccess = UserRoleLevel[user.role] ?? UserRoleLevel['customer'];
 
-    if (currentAccess < minAccess)
+    if (currentAccess! < minAccess!)
       return rep.error(403, 'Insufficient access role');
 
     req.user = user;

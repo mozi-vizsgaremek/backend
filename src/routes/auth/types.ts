@@ -93,6 +93,22 @@ export const RefreshSchema = {
 
 export type RefreshSchema = Static<typeof RefreshSchema.body>;
 
+export const ChangePasswordSchema = {
+  summary: 'Change password',
+  tags: [ 'auth' ],
+  security: requireRole('customer'),
+  body: Type.Object({
+    oldPassword: Password,
+    newPassword: Password
+  }),
+  response: {
+    200: Type.Void({ description: 'Successfully changed password' }),
+    403: mkError({ description: 'Old password is invalid' })
+  }
+}
+
+export type ChangePasswordSchema = Static<typeof ChangePasswordSchema.body>;
+
 // TODO: document TOTP onboarding process
 
 export const EnableTotpSchema = {
