@@ -59,7 +59,8 @@ export async function issueAccessToken(refresh: RefreshToken): Promise<[Result, 
     username: user.username,
     firstName: user.firstName,
     lastName: user.lastName,
-    role: user.role
+    role: user.role,
+    totpEnabled: user.totpEnabled ?? false
   }, config.jwtSecret, {
     issuer: config.jwtIssuer,
     expiresIn: config.accessTokenExpiration
@@ -86,6 +87,7 @@ export async function validateAccessToken(access: AccessToken): Promise<User|nul
       firstName: accessPayload.firstName,
       lastName: accessPayload.lastName,
       role: accessPayload.role,
+      totpEnabled: accessPayload.totpEnabled,
       password: ''
     }
   } catch (_err) {

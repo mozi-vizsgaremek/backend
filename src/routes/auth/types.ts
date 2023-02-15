@@ -152,7 +152,8 @@ export type AccessTokenPayload = TokenPayload & {
   username: string,
   firstName: string,
   lastName: string,
-  role: UserRole
+  role: UserRole,
+  totpEnabled: boolean
 }
 
 export type Tokens = {
@@ -169,6 +170,7 @@ export enum UserServiceResult {
   ErrorInvalidRefreshToken,
   ErrorInvalidAccessToken,
   ErrorUserNotFound,
+  ErrorTotpRequired,
   ErrorTotpNotEnabled,
   ErrorTotpAlreadyEnabled,
   ErrorTotpSecretNotFound,

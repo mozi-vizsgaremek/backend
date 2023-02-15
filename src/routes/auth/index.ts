@@ -19,7 +19,7 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
 
     return match(res)
       .with([Result.ErrorUsernameTaken, P._], 
-        () => rep.error(400, 'Username is already taken.'))
+        () => rep.error(400, 'Username is already taken'))
       .with([P._, null],
         () => rep.error(500, 'Unknown error occurred'))
       .with([Result.Ok, P.select()], 
@@ -38,6 +38,10 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
     return match(res)
       .with([P.union(Result.ErrorInvalidUsername, Result.ErrorInvalidPassword), P._],
         () => rep.error(401, 'Invalid username or password'))
+      .with([Result.ErrorInvalidTotp, P._],
+        () => rep.error(403, 'Invalid TOTP token'))
+      .with([Result.ErrorTotpRequired, P._],
+        () => rep.error(400, 'TOTP required'))
       .with([P._, null], 
         () => rep.error(500, 'Unknown internal error')) 
       .with([Result.Ok, P.select()],
@@ -110,8 +114,7 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
         () => rep.error(403, 'Invalid TOTP token'))
       .with(P.union(Result.ErrorTotpNotEnabled, Result.ErrorTotpSecretNotFound),
         () => rep.error(400, 'TOTP not enabled'))
-      .with(Result.Ok,
-        () => rep.ok())
+      .with(Result.Ok, () => rep.ok())
       .run();
   });
 
