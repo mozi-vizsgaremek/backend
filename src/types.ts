@@ -50,5 +50,3 @@ export const UserRoleLevel: { [key: string]: number } = {
 export function requireRole(role: UserRole): [ { [key: string]: string[] } ] {
   return [ { 'bearer': [ role ] } ];
 }
-
-export const bearerSecurity = { "bearer": [] };

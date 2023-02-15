@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { bearerSecurity, requireRole } from '../types';
+import { requireRole } from '../types';
 
 export default (server: FastifyInstance, _opts: null, done: Function) => {
   server.get('/', {
