@@ -39,10 +39,10 @@ export async function hasTotpSecret(id: string): Promise<boolean> {
 
 export async function setTotpSecret(user: User, secret: TotpSecret) {
   return pool.query(sql.unsafe
-                    `UPDATE user SET totp_secret = ${secret} WHERE id = ${user.id!}`);
+                    `UPDATE users SET totp_secret = ${secret} WHERE id = ${user.id!}`);
 }
 
 export async function setTotpStatus(user: User, status: boolean) {
   return pool.query(sql.unsafe
-                   `UPDATE user SET totp_enabled = ${status} WHERE id = ${user.id!}`);
+                   `UPDATE users SET totp_enabled = ${status} WHERE id = ${user.id!}`);
 }
