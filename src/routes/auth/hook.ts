@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { UserRoleLevel } from "../../types";
 import { validateAccessToken } from "./jwt";
-import { User, UserRoleLevel } from "./types";
+import { User } from "./types";
 
 declare module 'fastify' {
   interface FastifyRequest {

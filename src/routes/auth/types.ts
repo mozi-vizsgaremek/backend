@@ -1,10 +1,9 @@
 import { Static, Type } from '@sinclair/typebox';
 import { z } from 'zod';
-import { mkError } from '../../types';
+import { mkError, requireRole, UserRole } from '../../types';
 
 // model types
 
-export const UserRole = z.enum([ 'customer', 'employee', 'manager', 'admin' ]).default('customer'); 
 export const User = z.object({
   id: z.optional(z.string().uuid()),
   username: z.string().min(4).max(32),
@@ -16,15 +15,7 @@ export const User = z.object({
   totpEnabled: z.optional(z.boolean().default(false))
 });
 
-export type UserRole = z.infer<typeof UserRole>;
 export type User = z.infer<typeof User>;
-
-export const UserRoleLevel: { [key: string]: number } = {
-  'customer': 0,
-  'employee': 1,
-  'manager': 2,
-  'admin': 3
-}
 
 // schemas
 
@@ -107,7 +98,7 @@ export type RefreshSchema = Static<typeof RefreshSchema.body>;
 export const EnableTotpSchema = {
   summary: 'Start TOTP onboarding',
   tags: [ 'auth', 'totp' ],
-  security: [ { 'bearer': [ 'customer' ] } ],
+  security: requireRole('customer'),
   response: {
     200: Type.Object({
       secret: Type.String({ description: 'The TOTP shared secret' }),
@@ -122,7 +113,7 @@ export const EnableTotpSchema = {
 export const VerifyTotpSchema = {
   summary: 'Complete TOTP onboarding',
   tags: [ 'auth', 'totp' ],
-  security: [ { 'bearer': [ 'customer'] } ],
+  security: requireRole('customer'),
   body: Type.Object({
     password: Password,
     totp: TotpCode
@@ -134,7 +125,7 @@ export type VerifyTotpSchema = Static<typeof VerifyTotpSchema.body>;
 export const DisableTotpSchema = {
   summary: 'Disable TOTP two-factor authentication',
   tags: [ 'auth', 'totp' ],
-  security: [ { 'bearer': [ 'customer' ] } ],
+  security: requireRole('customer'),
   body: Type.Object({
     password: Password,
     totp: TotpCode

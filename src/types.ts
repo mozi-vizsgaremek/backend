@@ -36,4 +36,19 @@ export const Error = mkError();
 
 export type Error = Static<typeof Error>;
 
+// Access stuff
+
+export const UserRole = z.enum([ 'customer', 'employee', 'manager', 'admin' ]).default('customer'); 
+export type UserRole = z.infer<typeof UserRole>;
+export const UserRoleLevel: { [key: string]: number } = {
+  'customer': 0,
+  'employee': 1,
+  'manager': 2,
+  'admin': 3
+}
+
+export function requireRole(role: UserRole): [ { [key: string]: string[] } ] {
+  return [ { 'bearer': [ role ] } ];
+}
+
 export const bearerSecurity = { "bearer": [] };
