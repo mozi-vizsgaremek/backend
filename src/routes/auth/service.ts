@@ -9,7 +9,6 @@ import { issueTokens } from "./jwt";
 import * as m from './model';
 
 import Result = UserServiceResult;
-import { IntegrityConstraintViolationError } from "slonik";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))
