@@ -1,6 +1,6 @@
 import { LoginSchema, RegisterSchema, VerifyTotpSchema, 
          DisableTotpSchema, Tokens, UserServiceResult, 
-         User, TotpSecret, ChangePasswordSchema } from "./types";
+         User, TotpSecret, ChangePasswordSchema, DeleteSchema } from "./types";
 import { hash, verify } from 'argon2';
 import { match, P } from 'ts-pattern';
 
@@ -116,6 +116,25 @@ export async function disableTotp(user: User, input: DisableTotpSchema): Promise
     return Result.ErrorInvalidTotp;
 
   await m.setTotpStatus(user, false);
+
+  return Result.Ok;
+}
+
+export async function deleteUser(user: User, input: DeleteSchema): Promise<Result> {
+  const dbUser = (await m.getUser(user.id!))!;
+
+  if (!await verify(dbUser.password, input.password))
+    return Result.ErrorInvalidPassword;
+
+  if (dbUser.totpEnabled) {
+    if (!input.totp)
+      return Result.ErrorTotpRequired;
+
+    if (!verifyTotpCode(input.totp, dbUser.totpSecret!))
+      return Result.ErrorInvalidTotp;
+  }
+
+  await m.deleteUser(user);
 
   return Result.Ok;
 }

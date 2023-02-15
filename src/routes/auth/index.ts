@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { ChangePasswordSchema, DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
+import { ChangePasswordSchema, DeleteSchema, DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
 import { issueAccessToken } from "./jwt";
 import { generateTotpUri } from "./totp";
 
@@ -127,6 +127,22 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
         () => rep.error(403, 'Invalid TOTP token'))
       .with(P.union(Result.ErrorTotpNotEnabled, Result.ErrorTotpSecretNotFound),
         () => rep.error(400, 'TOTP not enabled'))
+      .with(Result.Ok, () => rep.ok())
+      .run();
+  });
+
+  server.delete('/', {
+    schema: DeleteSchema
+  }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep: FastifyReply) => {
+    const res = await s.deleteUser(req.user, req.body);
+
+    return match(res)
+      .with(Result.ErrorInvalidPassword,
+        () => rep.error(401, 'Invalid password'))
+      .with(Result.ErrorTotpRequired,
+        () => rep.error(400, 'TOTP required'))
+      .with(Result.ErrorInvalidTotp,
+        () => rep.error(401, 'Invalid TOTP token'))
       .with(Result.Ok, () => rep.ok())
       .run();
   });

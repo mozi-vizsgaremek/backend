@@ -51,3 +51,7 @@ export async function setPassword(user: User, hash: string) {
   return pool.query(sql.unsafe
                     `UPDATE users SET password = ${hash} WHERE id = ${user.id!}`);
 }
+
+export async function deleteUser(user: User) {
+  return pool.query(sql.unsafe`DELETE FROM users WHERE id = ${user.id!}`);
+}

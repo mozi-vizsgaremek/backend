@@ -145,10 +145,22 @@ export const DisableTotpSchema = {
   body: Type.Object({
     password: Password,
     totp: TotpCode
-  })
+  }) // TODO: add responses
 }
 
 export type DisableTotpSchema = Static<typeof DisableTotpSchema.body>;
+
+export const DeleteSchema = {
+  summary: 'Delete user',
+  tags: [ 'auth' ],
+  security: requireRole('customer'),
+  body: Type.Object({
+    password: Password,
+    totp: Type.Optional(TotpCode)
+  }) // TODO: add responses
+}
+
+export type DeleteSchema = Static<typeof DeleteSchema.body>;
 
 // type aliases
 
