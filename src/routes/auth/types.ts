@@ -12,7 +12,11 @@ export const User = z.object({
   password: z.string(),
   role: UserRole,
   totpSecret: z.optional(z.string()),
-  totpEnabled: z.optional(z.boolean().default(false))
+  totpEnabled: z.optional(z.boolean().default(false)),
+  managerId: z.optional(z.string().uuid()),
+  hourlyWage: z.optional(z.number()),
+  hireDate: z.optional(z.date()),
+  registrationDate: z.optional(z.date()) 
 });
 
 export type User = z.infer<typeof User>;
