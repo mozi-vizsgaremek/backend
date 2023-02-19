@@ -5,13 +5,13 @@ import { mkError, requireRole, UserRole } from '../../types';
 // model types
 
 export const User = z.object({
-  id: z.optional(z.string().uuid()),
+  id: z.optional(z.string().uuid()), // optional so it doesnt have to be passed on creation
   username: z.string().min(4).max(32),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   password: z.string(),
   role: UserRole,
-  totpSecret: z.optional(z.string()),
+  totpSecret: z.optional(z.string()), // same as above
   totpEnabled: z.optional(z.boolean().default(false)),
   managerId: z.optional(z.string().uuid()),
   hourlyWage: z.optional(z.number()),
