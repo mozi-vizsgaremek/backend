@@ -3,10 +3,11 @@ import { TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-pro
 import { config } from './config'
 import { fastify } from 'fastify'
 import { join } from 'path'
-import autoload from '@fastify/autoload'
 
+import autoload from '@fastify/autoload'
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
+import cors from '@fastify/cors';
 
 import type { DatabasePool } from 'slonik';
 import { decoratePool } from './pool'
@@ -28,37 +29,45 @@ async function init() {
     .withTypeProvider<TypeBoxTypeProvider>()
     .setValidatorCompiler(TypeBoxValidatorCompiler);
 
-  server.register(swagger, {
-    openapi: {
-      info: {
-        title: 'Mozi vizsgaremek',
-        description: 'Karsza Levente, Klement Szabolcs, Papp Dávid',
-        version: '0.0.1'
-      },
-      tags: [
-        { name: 'auth', description: 'Authentication' },
-        { name: 'test', description: 'Testing' },
-        { name: 'totp', description: 'TOTP Second factor' }
-      ],
-      components: {
-        securitySchemes: {
-          bearer: {
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT'
+  server.register(cors, {
+    origin: config.env == 'dev' ? /^.*/ : /.*leventea\.hu.*/
+  });
+
+  if (config.env == 'dev') {
+
+    server.register(swagger, {
+      openapi: {
+        info: {
+          title: 'Mozi vizsgaremek',
+          description: 'Karsza Levente, Klement Szabolcs, Papp Dávid',
+          version: '0.0.1'
+        },
+        tags: [
+          { name: 'auth', description: 'Authentication' },
+          { name: 'test', description: 'Testing' },
+          { name: 'totp', description: 'TOTP Second factor' }
+        ],
+        components: {
+          securitySchemes: {
+            bearer: {
+              type: 'http',
+              scheme: 'bearer',
+              bearerFormat: 'JWT'
+            }
           }
         }
       }
-    }
-  });
+    });
 
-  server.register(swaggerUi, {
-    routePrefix: '/docs',
-    uiConfig: {
-      docExpansion: 'full',
-      deepLinking: false
-    }
-  });
+    server.register(swaggerUi, {
+      routePrefix: '/docs',
+      uiConfig: {
+        docExpansion: 'full',
+        deepLinking: false
+      }
+    });
+
+  }
 
   // set up database pool
   await decoratePool(server);
