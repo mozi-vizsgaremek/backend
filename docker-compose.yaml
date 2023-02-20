@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:15.1
+
+    ports:
+      - 5432:5432
+
+    environment:
+      - POSTGRES_USER=vizsgaremek
+      - POSTGRES_PASSWORD=vizsgaremek
+
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      target: runner
+    
+    ports:
+      - 8080:8080
+
+    env_file: 
+      - .env
+
+    environment:
+      - POSTGRES_CONN_STR=postgresql://vizsgaremek:vizsgaremek@database:${POSTGRES_PORT}/vizsgaremek # TODO: use variables instead
+
+    depends_on:
+      - database
+
+    restart: unless-stopped

@@ -28,6 +28,7 @@ async function init() {
     .withTypeProvider<TypeBoxTypeProvider>()
     .setValidatorCompiler(TypeBoxValidatorCompiler);
 
+  console.log('swagger register');
   server.register(swagger, {
     openapi: {
       info: {
@@ -52,6 +53,7 @@ async function init() {
     }
   });
 
+  console.log('swagger ui register');
   server.register(swaggerUi, {
     routePrefix: '/docs',
     uiConfig: {
@@ -69,12 +71,19 @@ async function init() {
   // add authentication hook
   registerAuthHook(server);
 
+  console.log('route register');
+  console.log(`dirname: ${__dirname}`);
   // load routes
   server.register(autoload, {
     dir: join(__dirname, 'routes')
   });
 
-  server.listen({ port: config.port }, () => {
+  console.log(join(__dirname, 'routes'));
+  console.log('before routes');
+  server.printRoutes();
+  console.log('after routes');
+
+  server.listen({ port: config.port, host: '0.0.0.0' }, () => {
     console.log(`Server listening on ${config.port}`);
   });
 }
