@@ -1,0 +1,1 @@
+alter table shifts drop column required_managers;
