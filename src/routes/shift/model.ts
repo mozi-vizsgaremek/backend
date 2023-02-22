@@ -30,10 +30,16 @@ export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]>
 }
 
 export async function createShift(shift: CreateShift): Promise<Shift> {
-  return await pool.one(sql.type(Shift)
+  const res = await pool.one(sql.type(Shift)
     `INSERT INTO shifts (shift_from, shift_to, required_staff) 
      VALUES (${sql.date(shift.shiftFrom)}, ${sql.date(shift.shiftTo)}, ${shift.requiredStaff})
      RETURNING *`);
+
+  return {
+    ...res,
+    shiftFrom: new Date(res.shiftFrom),
+    shiftTo: new Date(res.shiftTo)
+  };
 }
 
 export async function deleteShift(id: UUID) {

@@ -10,13 +10,13 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
     schema: CreateSchema
   }, async (req: FastifyRequestTypebox<typeof CreateSchema>, rep) => {
     const shiftInput: CreateShift = {
-      ...req.body,
-      shiftFrom: new Date(req.body.from),
-      shiftTo: new Date(req.body.to)
+      shiftFrom: new Date(req.body.shiftFrom),
+      shiftTo: new Date(req.body.shiftTo),
+      requiredStaff: req.body.requiredStaff
     }
 
     const res = await m.createShift(shiftInput);
-    
+
     return rep.ok(res);
   });
 

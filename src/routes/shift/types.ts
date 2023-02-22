@@ -40,14 +40,14 @@ export const CreateSchema = {
   tags: [ 'shift' ],
   security: requireRole('manager'),
   body: Type.Object({
-    from: DateTimeStr,
-    to: DateTimeStr,
+    shiftFrom: DateTimeStr,
+    shiftTo: DateTimeStr,
     requiredStaff: Type.Number({ minimum: 1 })
   }),
   response: {
     200: Type.Object({
-      from: DateTimeStr,
-      to: DateTimeStr,
+      shiftFrom: DateTimeStr,
+      shiftTo: DateTimeStr,
       requiredStaff: Type.Number({ minimum: 1 }) 
     })
   }
