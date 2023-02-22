@@ -1,20 +1,20 @@
-import { requireRole } from '../../types';
+import type { FastifyRequestTypebox } from '../../types';
+import { FilterSchema } from './types';
 import type { FastifyInstance } from 'fastify';
-import { add } from 'date-fns';
 
 import * as m from './model';
+import { add } from 'date-fns';
 
 export default function (server: FastifyInstance, _opts: null, done: Function) {
-  server.get('/', {
-    schema: {
-      summary: 'Get all shifts in the given time range',
-      tags: [ 'shift' ],
-      security: requireRole('employee'),
-    }
-  }, async (_req, rep) => {
-    // TODO: implement a way to pass a time range (giving bodies to GET requests is not supported)
+  server.post('/filter', {
+    schema: FilterSchema
+  }, async (req: FastifyRequestTypebox<typeof FilterSchema>, rep) => {
+    const from = new Date(req.body.from);
 
-    const res = await m.getShifts(new Date(), add(new Date(), { days: 7 }))
+    // default to a week if `to` is not given
+    const to = new Date(req.body.to ?? add(from, { days: 7 }));
+    
+    const res = await m.getShifts(from, to);
     rep.ok(res);
   });
 
