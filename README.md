@@ -66,3 +66,7 @@ npm run nodemon
 ### Running in production
 
 Production deployments should use the provided Dockerfile. Alternatively, `npm run start` will start the compiled version.
+
+## Authenticating against the backend
+
+The current system is very simple. It mimicks the way Auth0's refresh/access token method works, with a much simpler implementation. The frontend first has to log in (`POST /auth/login`), and save both tokens. The access token expires in 5 minutes (by default), then the frontend must 'refresh' it (`POST /auth/refresh`), which will return a new access token. The access token includes most information required by the backend, which enables us to skip a round-trip to the database at the beginning of every request's lifecycle.
