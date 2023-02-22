@@ -6,7 +6,6 @@ import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { Format } from '@sinclair/typebox/format';
 import { createSqlTag } from 'slonik';
 import { ObjectOptions, Static, Type } from '@sinclair/typebox';
-import { fullFormats } from 'ajv-formats/src/formats';
 
 export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
@@ -79,4 +78,5 @@ export type TotpSecret = Static<typeof TotpSecret>;
 
 // Typebox formats
 
-Format.Set('date-time', (val) => (fullFormats['date-time'] as RegExp).test(val));
+// NOTE: stolen from https://github.com/ajv-validator/ajv-formats/blob/master/src/formats.ts#L105
+Format.Set('date-time', (val) => /^\d\d\d\d-[0-1]\d-[0-3]\dt(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i.test(val));
