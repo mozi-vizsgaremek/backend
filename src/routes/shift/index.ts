@@ -25,16 +25,21 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep) => {
     await m.deleteShift(req.query.id);
     return rep.ok();
-  })
+  });
   
   server.post('/filter', {
     schema: FilterSchema
   }, async (req: FastifyRequestTypebox<typeof FilterSchema>, rep) => {
     const from = new Date(req.body.from);
 
-    // default to a week if `to` is not given
-    const to = new Date(req.body.to ?? add(from, { days: 7 }));
-    
+    // default to the same day if `to` is not given
+    // this enables the frontend to only fetch a single day's worth of shifts
+    const to = req.body.to == null 
+      ? add(new Date(req.body.from), { days: 1 }) 
+      : new Date(req.body.to);
+   
+    console.log(from, to);
+
     const res = await m.getShifts(from, to);
     rep.ok(res);
   });

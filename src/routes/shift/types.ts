@@ -25,7 +25,7 @@ export type TakenShift = z.infer<typeof TakenShift>;
 
 // schemas
 
-export const DateStr = Type.String({ format: 'date-time' });
+export const DateStr = Type.String({ pattern: '^\\d{4}-\\d{2}-\\d{2}$' }); // date-time and date formats are undefined for some reason
 
 export const CreateSchema = {
   summary: 'Create a new shift (requires manager role)',
@@ -61,6 +61,7 @@ export type DeleteSchema = Static<typeof DeleteSchema.querystring>;
 
 export const FilterSchema = {
   summary: 'Get all shifts satisfying the given conditions',
+  description: 'If the `to` field is ommitted, it will only return the shifts that start on the day specified in `from`. Backend assumes start of day, this makes the `to` field exclusive, and the `from` field inclusive. Date format is YYYY-MM-DD.',
   tags: [ 'shift' ],
   security: requireRole('employee'),
   body: Type.Object({
