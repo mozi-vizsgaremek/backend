@@ -15,8 +15,14 @@ export type CreateShift = z.infer<typeof CreateShift>;
 
 export type Shift = z.infer<typeof Shift>;
 
+export const ShiftWithBookingCount = Shift.extend({
+  bookings: z.number().nonnegative()
+});
+
+export type ShiftWithBookingCount = z.infer<typeof ShiftWithBookingCount>;
+
 export const TakenShift = z.object({
-  id: z.string().uuid(),
+  id: z.optional(z.string().uuid()),
   shiftId: z.string().uuid(),
   userId: z.string().uuid()
 });
@@ -30,18 +36,18 @@ export const DateTimeStr = Type.String({ format: 'date-time', description: "Unix
 // TODO: https://github.com/sinclairzx81/typebox/issues/304 
 
 export const CreateSchema = {
-  summary: 'Create a new shift (requires manager role)',
+  summary: 'Create a new shift. Requires manager role',
   tags: [ 'shift' ],
   security: requireRole('manager'),
   body: Type.Object({
-    from: DateStr,
-    to: DateStr,
+    from: DateTimeStr,
+    to: DateTimeStr,
     requiredStaff: Type.Number({ minimum: 1 })
   }),
   response: {
     200: Type.Object({
-      from: DateStr,
-      to: DateStr,
+      from: DateTimeStr,
+      to: DateTimeStr,
       requiredStaff: Type.Number({ minimum: 1 }) 
     })
   }
@@ -50,7 +56,7 @@ export const CreateSchema = {
 export type CreateSchema = Static<typeof CreateSchema.body>;
 
 export const DeleteSchema = {
-  summary: 'Delete specified shift (requires manager role)',
+  summary: 'Delete specified shift. Requires manager role',
   description: 'Fails silently if given shift does not exist (returns 200)',
   tags: [ 'shift' ],
   security: requireRole('manager'),
@@ -63,7 +69,7 @@ export type DeleteSchema = Static<typeof DeleteSchema.querystring>;
 
 export const FilterSchema = {
   summary: 'Get all shifts satisfying the given conditions',
-  description: 'If the `to` field is ommitted, it will only return the shifts that start on the day specified in `from`. Backend assumes start of day, this makes the `to` field exclusive, and the `from` field inclusive. Date format is YYYY-MM-DD.',
+  description: 'If the `to` field is ommitted, it will only return the shifts that start on the day specified in `from`. Backend assumes start of day, this makes the `to` field exclusive, and the `from` field inclusive. Date format is YYYY-MM-DD. Requires employee role.',
   tags: [ 'shift' ],
   security: requireRole('employee'),
   body: Type.Object({
@@ -82,3 +88,27 @@ export const FilterSchema = {
 
 export type FilterSchema = Static<typeof FilterSchema.body>;
 
+export const BookSchema = {
+  summary: 'Book/take a shift. Requires employee role',
+  tags: [ 'booking' ],
+  security: requireRole('employee'),
+  querystring: Type.Object({
+    id: UUID
+  })
+}
+
+export type BookSchema = Static<typeof BookSchema.querystring>;
+
+export const DeleteBookingSchema = {
+  summary: 'Delete a shift booking. Requires employee role',
+  description: 'Fails silently if specified booking does not exist.',
+  tags: [ 'booking' ]
+}
+
+// Service result type
+
+export enum ShiftServiceResult {
+  ErrorShiftNotFound,
+  ErrorShiftOverbooked,
+  Ok
+}

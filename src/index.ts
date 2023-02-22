@@ -46,6 +46,7 @@ async function init() {
           { name: 'auth', description: 'Authentication' },
           { name: 'totp', description: 'TOTP Second factor' },
           { name: 'shift', description: 'Work shift management' },
+          { name: 'booking', description: 'Shift booking management' },
           { name: 'test', description: 'Testing' }
         ],
         components: {
