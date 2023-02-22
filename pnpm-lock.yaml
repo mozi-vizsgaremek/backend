@@ -11,7 +11,6 @@ specifiers:
   '@tsconfig/node18-strictest': ^1.0.0
   '@types/jsonwebtoken': ^9.0.1
   '@types/node': ^18.11.18
-  ajv-formats: ^2.1.1
   argon2: ^0.30.3
   date-fns: ^2.29.3
   dotenv: ^16.0.3
@@ -34,7 +33,6 @@ dependencies:
   '@fastify/type-provider-typebox': 2.4.0_7tm3ucp7md5tt35ifascqc3rhq
   '@sinclair/typebox': 0.25.21
   '@sunknudsen/totp': 1.0.2
-  ajv-formats: 2.1.1
   argon2: 0.30.3
   date-fns: 2.29.3
   dotenv: 16.0.3
