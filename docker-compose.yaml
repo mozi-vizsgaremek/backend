@@ -26,7 +26,8 @@ services:
 
     environment:
       - POSTGRES_CONN_STR=postgresql://vizsgaremek:vizsgaremek@database:5432/vizsgaremek # TODO: use variables instead
-
+      - PORT=8080
+      
     depends_on:
       - database
 

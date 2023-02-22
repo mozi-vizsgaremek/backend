@@ -8,7 +8,7 @@ TODO: introductions and etc
 
 This is mainly meant for development setups.
 
-TODO: production docker compose file
+The included docker compose manifest can be used to quickly set up the backend (along with the database) in production environments (but the default config values are not suitable for anything other than development and stagind deployments). The migrations need to be executed manually (see below).
 
 ```bash
 docker run -p 5432:5432 -e POSTGRES_USER=vizsgaremek -e POSTGRES_PASSWORD=vizsgaremek -d --name postgres postgres:15.1
@@ -42,7 +42,17 @@ npm install
 
 The backend is configured using .env files, an example is provided in the project root. The example values should work on development environments out of the box.
 
-TODO: config value docs
+An example of all available environment variables can be found in .env.example
+
+### Variables
+
+- POSTGRES_CONN_STR: Used by slonik to create a new connection pool to the database
+- POSTGRES_PORT: Only used by the compose file, this is the external port the container publishes.
+- JWT_SECRET: The JWT signing secret used for both the refresh and access tokens.
+- JWT_ISSUER: Arbitrary string, the value of the `iss` field in both types of JWT tokens. Changing this between deployments invalidates JWT tokens with mismatching issuer fields.
+- REFRESH_TOKEN_EXPIRATION: The time-to-live of the refresh token in minutes, defaults to a year.
+- ACCESS_TOKEN_EXPIRATION: The time-to-live of the access token in minutes, defaults to 5 minutes.
+- PORT: The listening port of the backend. The docker compose overrides this to 8080, but still publishes it to the given port.
 
 ## Running
 
