@@ -8,7 +8,7 @@ TODO: introductions and etc
 
 This is mainly meant for development setups.
 
-The included docker compose manifest can be used to quickly set up the backend (along with the database) in production environments (but the default config values are not suitable for anything other than development and stagind deployments). The migrations need to be executed manually (see below).
+The included docker compose manifest can be used to quickly set up the backend (along with the database) in production environments (but the default config values are not suitable for anything other than development and staging deployments). The migrations need to be executed manually (see below).
 
 ```bash
 docker run -p 5432:5432 -e POSTGRES_USER=vizsgaremek -e POSTGRES_PASSWORD=vizsgaremek -d --name postgres postgres:15.1
