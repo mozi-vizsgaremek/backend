@@ -25,7 +25,9 @@ export type TakenShift = z.infer<typeof TakenShift>;
 
 // schemas
 
-export const DateStr = Type.String({ pattern: '^\\d{4}-\\d{2}-\\d{2}$' }); // date-time and date formats are undefined for some reason
+export const DateStr = Type.String({ pattern: '^\\d{4}-[01][1-9]-[0123][1-9]$' }); // date-time and date formats are undefined for some reason
+export const DateTimeStr = Type.String({ format: 'date-time', description: "Unix timestamp with milisecond precision" });
+// TODO: https://github.com/sinclairzx81/typebox/issues/304 
 
 export const CreateSchema = {
   summary: 'Create a new shift (requires manager role)',
@@ -67,7 +69,15 @@ export const FilterSchema = {
   body: Type.Object({
     from: DateStr,
     to: Type.Optional(DateStr)
-  }) // TODO: add responses
+  }),
+  response: {
+    200: Type.Array(Type.Object({
+      id: UUID,
+      shiftFrom: DateTimeStr,
+      shiftTo: DateTimeStr,
+      requiredStaff: Type.Number()
+    }))
+  }
 } 
 
 export type FilterSchema = Static<typeof FilterSchema.body>;

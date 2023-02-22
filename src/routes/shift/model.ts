@@ -3,10 +3,16 @@ import { sql, UUID } from '../../types';
 import { CreateShift, Shift } from './types';
 
 export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]> {
-  return await pool.many(sql.type(Shift)
+  const res = await pool.many(sql.type(Shift)
     `SELECT * FROM shifts 
      WHERE shift_from >= ${sql.date(from)} AND shift_to <= ${sql.date(to)}
      ORDER BY shift_from, (shift_to - shift_from) DESC`);
+
+  return res.map(x => ({
+    ...x,
+    shiftFrom: new Date(x.shiftFrom),
+    shiftTo: new Date(x.shiftTo)
+  }))
 }
 
 export async function createShift(shift: CreateShift): Promise<Shift> {

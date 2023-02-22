@@ -38,8 +38,6 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
       ? add(new Date(req.body.from), { days: 1 }) 
       : new Date(req.body.to);
    
-    console.log(from, to);
-
     const res = await m.getShifts(from, to);
     rep.ok(res);
   });
