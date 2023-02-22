@@ -1,0 +1,30 @@
+_id: req_ffc8bc2c57cd4dd7b57354e7473444fc
+type: Request
+parentId: fld_wrk_6cdb1428addb45259cabbb76310bf69066a36e77
+modified: 1676293665028
+created: 1676278655870
+url: "{{ base_url }}/auth/login"
+name: Log in to an invalid account (wrong password)
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+      "username": "{{ _.testUser.username }}",
+      "password": "{{ _.testUser.incorrectPassword }}"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_3e1a892f10354ebaa91379fcb347d15f
+authentication: {}
+metaSortKey: -1676085334454.25
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

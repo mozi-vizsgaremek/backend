@@ -1,0 +1,10 @@
+_id: ut_dbba7e46b0b44933a60481088c958e33
+type: UnitTest
+parentId: uts_7be76c2becab4814a7af88df0dc0d585
+modified: 1676278093928
+created: 1676277957312
+requestId: req_wrk_6cdb1428addb45259cabbb76310bf6906fee21f0
+name: Log into valid account
+code: |-
+  const response1 = await insomnia.send();
+  expect(response1.status).to.equal(200);

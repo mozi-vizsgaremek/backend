@@ -1,0 +1,14 @@
+_id: ut_cd8eda2d9d8b47489ecca3a1fabc10c4
+type: UnitTest
+parentId: uts_7be76c2becab4814a7af88df0dc0d585
+modified: 1676293433785
+created: 1676293417102
+requestId: req_99232d44ed2a4545b979fd28f993981f
+name: Test access key (from re-issue)
+code: |-
+  const resp = await insomnia.send();
+  expect(resp.status).to.equal(418);
+
+  const body = JSON.parse(resp.data);
+
+  expect(body.whoami).to.equal('teapot');

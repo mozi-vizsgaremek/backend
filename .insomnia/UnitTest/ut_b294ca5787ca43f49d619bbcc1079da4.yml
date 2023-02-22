@@ -1,0 +1,15 @@
+_id: ut_b294ca5787ca43f49d619bbcc1079da4
+type: UnitTest
+parentId: uts_7be76c2becab4814a7af88df0dc0d585
+modified: 1676385250460
+created: 1676022057903
+requestId: req_wrk_6cdb1428addb45259cabbb76310bf6905d1baa8b
+name: Register duplicate username
+code: |-
+  const resp = await insomnia.send();
+
+  expect(resp.status).to.equal(400);
+
+  const body = JSON.parse(resp.data);
+
+  expect(body.message).to.equal('Username is already taken')

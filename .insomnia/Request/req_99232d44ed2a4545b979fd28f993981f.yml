@@ -1,0 +1,25 @@
+_id: req_99232d44ed2a4545b979fd28f993981f
+type: Request
+parentId: fld_wrk_6cdb1428addb45259cabbb76310bf69066a36e77
+modified: 1676385528504
+created: 1676293298167
+url: "{{ base_url }}/"
+name: Test access key (from /auth/refresh)
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{% response 'body', 'req_wrk_6cdb1428addb45259cabbb76310bf6905311e4d7',
+    'b64::JC5hY2Nlc3NUb2tlbg==::46b', 'always', 60 %}"
+  prefix: Bearer
+metaSortKey: -1675893434049.75
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

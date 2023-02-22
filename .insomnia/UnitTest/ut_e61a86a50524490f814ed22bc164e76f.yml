@@ -1,0 +1,14 @@
+_id: ut_e61a86a50524490f814ed22bc164e76f
+type: UnitTest
+parentId: uts_7be76c2becab4814a7af88df0dc0d585
+modified: 1676278774870
+created: 1676277963370
+requestId: req_541b83633c234ba28aca1f7f2c49a273
+name: Log into invalid account (wrong username)
+code: |-
+  const resp = await insomnia.send();
+  expect(resp.status).to.equal(401);
+
+  const body = JSON.parse(resp.data);
+
+  expect(body.message).to.equal('Invalid username or password');

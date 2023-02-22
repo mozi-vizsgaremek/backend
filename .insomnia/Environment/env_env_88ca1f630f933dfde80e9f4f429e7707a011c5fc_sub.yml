@@ -1,0 +1,38 @@
+_id: env_env_88ca1f630f933dfde80e9f4f429e7707a011c5fc_sub
+type: Environment
+parentId: env_88ca1f630f933dfde80e9f4f429e7707a011c5fc
+modified: 1676818991215
+created: 1676021277065
+name: OpenAPI env
+data:
+  scheme: http
+  base_path: ""
+  host: localhost:8080
+  bearerToken: "{% response 'body',
+    'req_wrk_6cdb1428addb45259cabbb76310bf6906fee21f0',
+    'b64::JC5hY2Nlc3NUb2tlbg==::46b', 'always', 60 %}"
+  testUser:
+    username: test_user
+    password: test_password
+    incorrectPassword: incorrect_password
+  invalidUser:
+    username: this_user_doesnt_exist
+    password: whatever
+dataPropertyOrder:
+  "&":
+    - scheme
+    - base_path
+    - host
+    - bearerToken
+    - testUser
+    - invalidUser
+  "&~|testUser":
+    - username
+    - password
+    - incorrectPassword
+  "&~|invalidUser":
+    - username
+    - password
+color: null
+isPrivate: false
+metaSortKey: 1676021277065

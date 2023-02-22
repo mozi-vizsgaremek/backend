@@ -1,0 +1,24 @@
+_id: req_wrk_6cdb1428addb45259cabbb76310bf690439f2cdf1
+type: Request
+parentId: fld_wrk_6cdb1428addb45259cabbb76310bf69071125121
+modified: 1676450928244
+created: 1676384987817
+url: "{{ base_url }}/auth/totp"
+name: Start TOTP onboarding
+description: ""
+method: POST
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{{ _.bearerToken }}"
+  prefix: Bearer
+metaSortKey: -1676384987817
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
