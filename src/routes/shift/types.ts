@@ -108,9 +108,18 @@ export const DeleteBookingSchema = {
   summary: 'Delete a shift booking. Requires employee role',
   description: 'Fails silently if specified booking does not exist.',
   tags: [ 'booking' ],
+  security: requireRole('employee'),
   querystring: Type.Object({
     id: UUID
   })
+}
+
+export type DeleteBookingSchema = Static<typeof DeleteBookingSchema.querystring>;
+
+export const ListBookingsSchema = {
+  summary: "List user's upcoming shift bookings",
+  tags: [ 'booking' ],
+  security: requireRole('employee')
 }
 
 // Service result type

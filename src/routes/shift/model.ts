@@ -65,5 +65,5 @@ export async function getBookings(user: User): Promise<readonly ExtendedTakenShi
   return await pool.many(sql.type(ExtendedTakenShift)
     `SELECT *
      FROM shifts_taken JOIN shifts ON shifts_taken.shift_id = shifts.id
-     WHERE user_id = ${user.id!}`);
+     WHERE user_id = ${user.id!} AND shift_to > now()`); // i'm using shift_to here so the current shift is still included
 }

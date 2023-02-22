@@ -1,5 +1,5 @@
 import type { FastifyRequestTypebox } from '../../types';
-import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result } from './types';
+import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result, ListBookingsSchema } from './types';
 import type { FastifyInstance } from 'fastify';
 import { add } from 'date-fns';
 import { match } from 'ts-pattern';
@@ -64,6 +64,13 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   }, async (req: FastifyRequestTypebox<typeof DeleteBookingSchema>, rep) => {
     await m.deleteBooking(req.query.id);
     return rep.ok();
+  });
+
+  server.get('/book/', {
+    schema: ListBookingsSchema
+  }, async (req: FastifyRequestTypebox<typeof ListBookingsSchema>, rep) => {
+    const res = await m.getBookings(req.user);
+    return rep.ok(res);
   });
 
   done()
