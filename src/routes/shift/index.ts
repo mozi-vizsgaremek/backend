@@ -62,7 +62,8 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.delete('/book/:id', {
     schema: DeleteBookingSchema
   }, async (req: FastifyRequestTypebox<typeof DeleteBookingSchema>, rep) => {
-
+    await m.deleteBooking(req.query.id);
+    return rep.ok();
   });
 
   done()

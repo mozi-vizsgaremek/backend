@@ -1,7 +1,7 @@
 import type { User } from '../auth/types';
 import { pool } from '../../pool';
 import { sql, UUID } from '../../types';
-import { CreateShift, Shift, ShiftWithBookingCount, TakenShift } from './types';
+import { CreateShift, ExtendedTakenShift, Shift, ShiftWithBookingCount, TakenShift } from './types';
 
 export function fixShift(shift: Shift): Shift {
   return {
@@ -50,7 +50,20 @@ export async function deleteShift(id: UUID) {
 
 export async function bookShift(user: User, shiftId: UUID): Promise<TakenShift> {
   return await pool.one(sql.type(TakenShift)
-    `INSERT INTO shifts (shift_id, user_id)
+    `INSERT INTO shifts_taken (shift_id, user_id)
      VALUES (${shiftId}, ${user.id!})
      RETURNING *`);
+}
+
+export async function deleteBooking(bookingId: UUID) {
+  return await pool.query(sql.unsafe
+    `DELETE FROM shifts_taken WHERE id = ${bookingId}`);
+}
+
+// REVIEW: to - from range like with getShifts?
+export async function getBookings(user: User): Promise<readonly ExtendedTakenShift[]> {
+  return await pool.many(sql.type(ExtendedTakenShift)
+    `SELECT *
+     FROM shifts_taken JOIN shifts ON shifts_taken.shift_id = shifts.id
+     WHERE user_id = ${user.id!}`);
 }

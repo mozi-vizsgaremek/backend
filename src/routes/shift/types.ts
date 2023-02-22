@@ -29,6 +29,11 @@ export const TakenShift = z.object({
 
 export type TakenShift = z.infer<typeof TakenShift>;
 
+export const ExtendedTakenShift =
+  TakenShift.extend(Shift.omit({ id: true }).shape);
+
+export type ExtendedTakenShift = z.infer<typeof ExtendedTakenShift>;
+
 // schemas
 
 export const DateStr = Type.String({ pattern: '^\\d{4}-[01][1-9]-[0123][1-9]$' }); // date-time and date formats are undefined for some reason
@@ -102,7 +107,10 @@ export type BookSchema = Static<typeof BookSchema.querystring>;
 export const DeleteBookingSchema = {
   summary: 'Delete a shift booking. Requires employee role',
   description: 'Fails silently if specified booking does not exist.',
-  tags: [ 'booking' ]
+  tags: [ 'booking' ],
+  querystring: Type.Object({
+    id: UUID
+  })
 }
 
 // Service result type
