@@ -45,7 +45,8 @@ async function init() {
         tags: [
           { name: 'auth', description: 'Authentication' },
           { name: 'test', description: 'Testing' },
-          { name: 'totp', description: 'TOTP Second factor' }
+          { name: 'totp', description: 'TOTP Second factor' },
+          { name: 'shift', description: 'Work shift management' }
         ],
         components: {
           securitySchemes: {
