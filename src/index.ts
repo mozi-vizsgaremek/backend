@@ -44,9 +44,9 @@ async function init() {
         },
         tags: [
           { name: 'auth', description: 'Authentication' },
-          { name: 'test', description: 'Testing' },
           { name: 'totp', description: 'TOTP Second factor' },
-          { name: 'shift', description: 'Work shift management' }
+          { name: 'shift', description: 'Work shift management' },
+          { name: 'test', description: 'Testing' }
         ],
         components: {
           securitySchemes: {
@@ -63,7 +63,6 @@ async function init() {
     server.register(swaggerUi, {
       routePrefix: '/docs',
       uiConfig: {
-        docExpansion: 'full',
         deepLinking: false
       }
     });
