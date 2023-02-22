@@ -13,8 +13,7 @@ export async function bookShift(user: User, shiftId: UUID): Promise<Result> {
   if (shift.bookings >= shift.requiredStaff)
     return Result.ErrorShiftOverbooked;
 
-  // TODO: finish implementation
-
+  await m.bookShift(user, shiftId);
 
   return Result.Ok; 
-} 
+}

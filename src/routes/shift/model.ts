@@ -1,13 +1,22 @@
+import type { User } from '../auth/types';
 import { pool } from '../../pool';
 import { sql, UUID } from '../../types';
-import { CreateShift, Shift, ShiftWithBookingCount } from './types';
+import { CreateShift, Shift, ShiftWithBookingCount, TakenShift } from './types';
 
-export async function getShift(id: UUID): Promise<Shift|null> {
+export function fixShift(shift: Shift): Shift {
+  return {
+    ...shift,
+    shiftFrom: new Date(shift.shiftFrom),
+    shiftTo: new Date(shift.shiftTo)
+  };
+}
+
+export async function getShift(id: UUID): Promise<Shift | null> {
   return pool.maybeOne(sql.type(Shift)
     `SELECT * FROM shifts WHERE id = ${id}`);
 }
 
-export async function getShiftWithBookingCounts(id: UUID): Promise<ShiftWithBookingCount|null> {
+export async function getShiftWithBookingCounts(id: UUID): Promise<ShiftWithBookingCount | null> {
   const subquery = sql.typeAlias('number')
     `SELECT count(id) FROM shifts_taken WHERE shift_id = ${id}`;
 
@@ -22,11 +31,7 @@ export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]>
      WHERE shift_from >= ${sql.date(from)} AND shift_to <= ${sql.date(to)}
      ORDER BY shift_from, (shift_to - shift_from) DESC`);
 
-  return res.map(x => ({
-    ...x,
-    shiftFrom: new Date(x.shiftFrom),
-    shiftTo: new Date(x.shiftTo)
-  }))
+  return res.map(fixShift);
 }
 
 export async function createShift(shift: CreateShift): Promise<Shift> {
@@ -35,11 +40,7 @@ export async function createShift(shift: CreateShift): Promise<Shift> {
      VALUES (${sql.date(shift.shiftFrom)}, ${sql.date(shift.shiftTo)}, ${shift.requiredStaff})
      RETURNING *`);
 
-  return {
-    ...res,
-    shiftFrom: new Date(res.shiftFrom),
-    shiftTo: new Date(res.shiftTo)
-  };
+  return fixShift(res);
 }
 
 export async function deleteShift(id: UUID) {
@@ -47,6 +48,9 @@ export async function deleteShift(id: UUID) {
     `DELETE FROM shifts WHERE id = ${id}`);
 }
 
-export async function bookShift(user: User) {
-  // TODO: finish implementation
+export async function bookShift(user: User, shiftId: UUID): Promise<TakenShift> {
+  return await pool.one(sql.type(TakenShift)
+    `INSERT INTO shifts (shift_id, user_id)
+     VALUES (${shiftId}, ${user.id!})
+     RETURNING *`);
 }

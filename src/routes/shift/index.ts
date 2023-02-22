@@ -1,9 +1,11 @@
 import type { FastifyRequestTypebox } from '../../types';
-import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema } from './types';
+import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result } from './types';
 import type { FastifyInstance } from 'fastify';
 import { add } from 'date-fns';
 
+import * as s from './service';
 import * as m from './model';
+import { match } from 'ts-pattern';
 
 export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.post('/', {
@@ -45,7 +47,16 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.post('/book/:id', {
     schema: BookSchema
   }, async (req: FastifyRequestTypebox<typeof BookSchema>, rep) => {
+    const res = await s.bookShift(req.user, req.query.id);
 
+    return match(res)
+      .with(Result.ErrorShiftNotFound,
+        () => rep.error(404, 'Shift not found'))
+      .with(Result.ErrorShiftOverbooked,
+        () => rep.error(403, 'Shift overbooked'))
+      .with(Result.Ok,
+        () => rep.ok())
+      .run();
   });
 
   server.delete('/book/:id', {
