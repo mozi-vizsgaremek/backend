@@ -2,10 +2,10 @@ import type { FastifyRequestTypebox } from '../../types';
 import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result } from './types';
 import type { FastifyInstance } from 'fastify';
 import { add } from 'date-fns';
+import { match } from 'ts-pattern';
 
 import * as s from './service';
 import * as m from './model';
-import { match } from 'ts-pattern';
 
 export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.post('/', {
