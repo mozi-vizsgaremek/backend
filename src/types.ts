@@ -3,8 +3,10 @@ import type { FastifyRequest, RawRequestDefaultExpression, RawServerDefault, } f
 import type { RouteGenericInterface } from 'fastify/types/route';
 import type { FastifySchema } from 'fastify/types/schema';
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { Format } from '@sinclair/typebox/format';
 import { createSqlTag } from 'slonik';
 import { ObjectOptions, Static, Type } from '@sinclair/typebox';
+import { fullFormats } from 'ajv-formats/src/formats';
 
 export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
@@ -20,7 +22,8 @@ export const sql = createSqlTag({
       id: z.number(),
     }),
     void: z.object({}).strict(),
-    bool: z.boolean()
+    bool: z.boolean(),
+    number: z.number()
   }
 });
 
@@ -74,3 +77,6 @@ export type TotpCode = Static<typeof TotpCode>;
 export const TotpSecret = Type.String();
 export type TotpSecret = Static<typeof TotpSecret>;
 
+// Typebox formats
+
+Format.Set('date-time', (val) => (fullFormats['date-time'] as RegExp).test(val));
