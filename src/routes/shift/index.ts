@@ -1,11 +1,32 @@
 import type { FastifyRequestTypebox } from '../../types';
-import { FilterSchema } from './types';
+import { CreateSchema, FilterSchema, CreateShift, DeleteSchema } from './types';
 import type { FastifyInstance } from 'fastify';
-
-import * as m from './model';
 import { add } from 'date-fns';
 
+import * as m from './model';
+
 export default function (server: FastifyInstance, _opts: null, done: Function) {
+  server.post('/', {
+    schema: CreateSchema
+  }, async (req: FastifyRequestTypebox<typeof CreateSchema>, rep) => {
+    const shiftInput: CreateShift = {
+      ...req.body,
+      shiftFrom: new Date(req.body.from),
+      shiftTo: new Date(req.body.to)
+    }
+
+    const res = await m.createShift(shiftInput);
+    
+    return rep.ok(res);
+  });
+
+  server.delete('/:id', {
+    schema: DeleteSchema,
+  }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep) => {
+    await m.deleteShift(req.query.id);
+    return rep.ok();
+  })
+  
   server.post('/filter', {
     schema: FilterSchema
   }, async (req: FastifyRequestTypebox<typeof FilterSchema>, rep) => {
