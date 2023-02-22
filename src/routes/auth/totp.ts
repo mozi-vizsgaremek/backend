@@ -1,5 +1,6 @@
 import { generateSecret, generateUri, validateToken } from '@sunknudsen/totp';
-import type { TotpCode, TotpSecret, User } from './types';
+import type { TotpCode, TotpSecret } from '../../types';
+import type { User } from './types';
 
 export function generateTotpSecret(): TotpSecret {
   return generateSecret(32);

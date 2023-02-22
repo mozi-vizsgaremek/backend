@@ -50,3 +50,27 @@ export const UserRoleLevel: { [key: string]: number } = {
 export function requireRole(role: UserRole): [ { [key: string]: string[] } ] {
   return [ { 'bearer': [ role ] } ];
 }
+
+// common schema types
+
+export const UUID = Type.String({ format: 'uuid' });
+export type UUID = Static<typeof UUID>;
+
+export const Username = Type.String({ minLength: 4, maxLength: 32, pattern: '^([A-Za-z0-9_-]){4,32}$' });
+export type Username = Static<typeof Username>; 
+
+export const Password = Type.String({ minLength: 8, maxLength: 256, pattern: '^[A-Za-z0-9!@#$%&^_\W]{8,256}$' });
+export type Password = Static<typeof Password>;
+
+export const RefreshToken = Type.String({ description: 'The refresh token used to get a new access token' });
+export type RefreshToken = Static<typeof RefreshToken>;
+
+export const AccessToken = Type.String({ description: 'The bearer token to be passed in the Authorization header to the backend.' });
+export type AccessToken = Static<typeof AccessToken>; 
+
+export const TotpCode = Type.String({ minLength: 6, maxLength: 6, pattern: '^[0-9]{6}$' });
+export type TotpCode = Static<typeof TotpCode>;
+
+export const TotpSecret = Type.String();
+export type TotpSecret = Static<typeof TotpSecret>;
+

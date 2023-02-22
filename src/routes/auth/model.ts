@@ -1,6 +1,6 @@
-import { sql } from '../../types';
+import { sql, TotpSecret } from '../../types';
 import { pool } from '../../pool';
-import { TotpSecret, User } from './types';
+import { User } from './types';
 
 export async function getUser(id: string): Promise<User|null> {
   return pool.maybeOne(sql.type(User)

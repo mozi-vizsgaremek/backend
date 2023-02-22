@@ -1,6 +1,6 @@
 import { LoginSchema, RegisterSchema, VerifyTotpSchema, 
          DisableTotpSchema, Tokens, UserServiceResult, 
-         User, TotpSecret, ChangePasswordSchema, DeleteSchema } from "./types";
+         User, ChangePasswordSchema, DeleteSchema } from "./types";
 import { hash, verify } from 'argon2';
 import { match, P } from 'ts-pattern';
 
@@ -9,6 +9,7 @@ import { issueTokens } from "./jwt";
 import * as m from './model';
 
 import Result = UserServiceResult;
+import type { TotpSecret } from "../../types";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))

@@ -1,12 +1,13 @@
 import { sign, verify } from 'jsonwebtoken';
 import { match, P } from 'ts-pattern';
 
-import { AccessToken, AccessTokenPayload, RefreshToken, RefreshTokenPayload, TokenPayload, Tokens, User, UserServiceResult } from "./types";
+import { AccessTokenPayload, RefreshTokenPayload, TokenPayload, Tokens, User, UserServiceResult } from "./types";
 import { config } from '../../config';
 import { isString } from "../../utils";
 import * as m from './model';
 
 import Result = UserServiceResult;
+import type { AccessToken, RefreshToken } from '../../types';
 
 export async function issueTokens(user: User): Promise<[Result, Tokens | null]> {
   const refresh = await issueRefreshToken(user);
