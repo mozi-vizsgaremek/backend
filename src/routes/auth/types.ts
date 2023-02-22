@@ -41,9 +41,6 @@ export type TotpCode = Static<typeof TotpCode>;
 export const TotpSecret = Type.String();
 export type TotpSecret = Static<typeof TotpSecret>;
 
-// NOTE: I'm aware that this pattern of separating schemas from the routes makes it way more burdensome to read
-// but the way I wrote the service requires this, the rest of the routes do not make this mistake.
-
 export const RegisterSchema = {
   summary: 'Register a new user',
   tags: [ 'auth' ],

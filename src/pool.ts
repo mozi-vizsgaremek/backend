@@ -3,7 +3,7 @@ import { config } from './config';
 import { createPool, DatabasePool } from "slonik";
 import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
 
-// please not that this module assumes that decorate pool is called before the server starts up
+// please note that this module assumes that decorate pool is called before the server starts up
 // if it's not called, things might not go the way you want them to
 export let pool: DatabasePool;
 
