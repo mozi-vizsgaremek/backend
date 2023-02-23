@@ -24,17 +24,6 @@ export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings 
      GROUP BY s.id`);
 }
 
-/*
-export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings | null> {
-  const subquery = sql.typeAlias('number')
-    `SELECT count(id) FROM shifts_taken WHERE shift_id = ${id}`;
-
-  return pool.maybeOne(sql.type(ShiftWithBookings)
-    `SELECT *, (${subquery}) as bookings 
-     FROM shifts WHERE id = ${id}`);
-}
-*/
-
 export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]> {
   const res = await pool.many(sql.type(Shift)
     `SELECT * FROM shifts 
