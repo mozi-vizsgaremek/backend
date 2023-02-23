@@ -1,8 +1,8 @@
 import type { FastifyRequestTypebox } from '../../types';
-import { CreateSchema, FilterSchema, CreateShift, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result, ListBookingsSchema } from './types';
+import { CreateSchema, FilterSchema, DeleteSchema, BookSchema, DeleteBookingSchema, ShiftServiceResult as Result, ListBookingsSchema } from './types';
 import type { FastifyInstance } from 'fastify';
 import { add } from 'date-fns';
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 
 import * as s from './service';
 import * as m from './model';
@@ -11,15 +11,17 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.post('/', {
     schema: CreateSchema
   }, async (req: FastifyRequestTypebox<typeof CreateSchema>, rep) => {
-    const shiftInput: CreateShift = {
-      shiftFrom: new Date(req.body.shiftFrom),
-      shiftTo: new Date(req.body.shiftTo),
-      requiredStaff: req.body.requiredStaff
-    }
+    const res = await s.createShift(
+      new Date(req.body.shiftFrom),
+      new Date(req.body.shiftTo),
+      req.body.requiredStaff);
 
-    const res = await m.createShift(shiftInput);
-
-    return rep.ok(res);
+    return match(res)
+      .with([Result.ErrorInvalidTimeRange, P._],
+        () => rep.error(400, 'Invalid time range'))
+      .with([Result.Ok, P.select()],
+        shift => rep.ok(shift))
+      .run();      
   });
 
   server.delete('/:id', {

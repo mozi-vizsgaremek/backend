@@ -128,5 +128,6 @@ export const ListBookingsSchema = {
 export enum ShiftServiceResult {
   ErrorShiftNotFound,
   ErrorShiftOverbooked,
+  ErrorInvalidTimeRange,
   Ok
 }
