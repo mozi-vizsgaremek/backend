@@ -51,6 +51,7 @@ export const CreateSchema = {
   }),
   response: {
     200: Type.Object({
+      id: UUID,
       shiftFrom: DateTimeStr,
       shiftTo: DateTimeStr,
       requiredStaff: Type.Number({ minimum: 1 }) 
