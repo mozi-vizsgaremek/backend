@@ -15,12 +15,6 @@ export type CreateShift = z.infer<typeof CreateShift>;
 
 export type Shift = z.infer<typeof Shift>;
 
-export const ShiftWithBookingCount = Shift.extend({
-  bookings: z.number().nonnegative()
-});
-
-export type ShiftWithBookingCount = z.infer<typeof ShiftWithBookingCount>;
-
 export const TakenShift = z.object({
   id: z.optional(z.string().uuid()),
   shiftId: z.string().uuid(),
@@ -28,6 +22,13 @@ export const TakenShift = z.object({
 });
 
 export type TakenShift = z.infer<typeof TakenShift>;
+
+export const ShiftWithBookings = Shift.extend({
+  bookedUsers: z.array(z.string().uuid())
+});
+
+export type ShiftWithBookings = z.infer<typeof ShiftWithBookings>;
+
 
 export const ExtendedTakenShift =
   TakenShift.extend(Shift.omit({ id: true }).shape);
@@ -66,12 +67,12 @@ export const DeleteSchema = {
   description: 'Fails silently if given shift does not exist (returns 200)',
   tags: [ 'shift' ],
   security: requireRole('manager'),
-  querystring: Type.Object({
+  params: Type.Object({
     id: UUID
   })
 }
 
-export type DeleteSchema = Static<typeof DeleteSchema.querystring>;
+export type DeleteSchema = Static<typeof DeleteSchema.params>;
 
 export const FilterSchema = {
   summary: 'Get all shifts satisfying the given conditions',
@@ -98,24 +99,24 @@ export const BookSchema = {
   summary: 'Book/take a shift. Requires employee role',
   tags: [ 'booking' ],
   security: requireRole('employee'),
-  querystring: Type.Object({
+  params: Type.Object({
     id: UUID
   })
 }
 
-export type BookSchema = Static<typeof BookSchema.querystring>;
+export type BookSchema = Static<typeof BookSchema.params>;
 
 export const DeleteBookingSchema = {
   summary: 'Delete a shift booking. Requires employee role',
   description: 'Fails silently if specified booking does not exist.',
   tags: [ 'booking' ],
   security: requireRole('employee'),
-  querystring: Type.Object({
+  params: Type.Object({
     id: UUID
   })
 }
 
-export type DeleteBookingSchema = Static<typeof DeleteBookingSchema.querystring>;
+export type DeleteBookingSchema = Static<typeof DeleteBookingSchema.params>;
 
 export const ListBookingsSchema = {
   summary: "List user's upcoming shift bookings",
@@ -129,5 +130,6 @@ export enum ShiftServiceResult {
   ErrorShiftNotFound,
   ErrorShiftOverbooked,
   ErrorInvalidTimeRange,
+  ErrorDuplicateBooking,
   Ok
 }

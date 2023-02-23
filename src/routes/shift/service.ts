@@ -16,13 +16,18 @@ export async function createShift(from: Date, to: Date, requiredStaff: number): 
 }
 
 export async function bookShift(user: User, shiftId: UUID): Promise<Result> {
-  const shift = await m.getShiftWithBookingCounts(shiftId);
+  const shift = await m.getShiftWithBookings(shiftId);
+
+  console.log(shift);
 
   if (shift == null)
     return Result.ErrorShiftNotFound;
 
-  if (shift.bookings >= shift.requiredStaff)
+  if (shift.bookedUsers.length >= shift.requiredStaff)
     return Result.ErrorShiftOverbooked;
+
+  if (shift.bookedUsers.includes(user.id!))
+    return Result.ErrorDuplicateBooking;
 
   await m.bookShift(user, shiftId);
 

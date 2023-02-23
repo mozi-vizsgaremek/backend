@@ -1,7 +1,7 @@
 import type { User } from '../auth/types';
 import { pool } from '../../pool';
 import { sql, UUID } from '../../types';
-import { CreateShift, ExtendedTakenShift, Shift, ShiftWithBookingCount, TakenShift } from './types';
+import { CreateShift, ExtendedTakenShift, Shift, ShiftWithBookings, TakenShift } from './types';
 
 export function fixShift(shift: Shift): Shift {
   return {
@@ -16,14 +16,24 @@ export async function getShift(id: UUID): Promise<Shift | null> {
     `SELECT * FROM shifts WHERE id = ${id}`);
 }
 
-export async function getShiftWithBookingCounts(id: UUID): Promise<ShiftWithBookingCount | null> {
+export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings | null> {
+  return pool.maybeOne(sql.type(ShiftWithBookings)
+    `SELECT s.*, array_agg(st.user_id) AS booked_users
+     FROM shifts s JOIN shifts_taken st ON s.id = st.shift_id
+     WHERE s.id = ${id}
+     GROUP BY s.id`);
+}
+
+/*
+export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings | null> {
   const subquery = sql.typeAlias('number')
     `SELECT count(id) FROM shifts_taken WHERE shift_id = ${id}`;
 
-  return pool.maybeOne(sql.type(ShiftWithBookingCount)
+  return pool.maybeOne(sql.type(ShiftWithBookings)
     `SELECT *, (${subquery}) as bookings 
      FROM shifts WHERE id = ${id}`);
 }
+*/
 
 export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]> {
   const res = await pool.many(sql.type(Shift)

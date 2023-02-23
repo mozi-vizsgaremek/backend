@@ -27,7 +27,7 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.delete('/:id', {
     schema: DeleteSchema,
   }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep) => {
-    await m.deleteShift(req.query.id);
+    await m.deleteShift(req.params.id);
     return rep.ok();
   });
   
@@ -49,13 +49,15 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.post('/book/:id', {
     schema: BookSchema
   }, async (req: FastifyRequestTypebox<typeof BookSchema>, rep) => {
-    const res = await s.bookShift(req.user, req.query.id);
+    const res = await s.bookShift(req.user, req.params.id);
 
     return match(res)
       .with(Result.ErrorShiftNotFound,
         () => rep.error(404, 'Shift not found'))
       .with(Result.ErrorShiftOverbooked,
         () => rep.error(403, 'Shift overbooked'))
+      .with(Result.ErrorDuplicateBooking,
+        () => rep.error(403, 'Duplicate booking'))
       .with(Result.Ok,
         () => rep.ok())
       .run();
@@ -64,7 +66,7 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
   server.delete('/book/:id', {
     schema: DeleteBookingSchema
   }, async (req: FastifyRequestTypebox<typeof DeleteBookingSchema>, rep) => {
-    await m.deleteBooking(req.query.id);
+    await m.deleteBooking(req.params.id);
     return rep.ok();
   });
 
