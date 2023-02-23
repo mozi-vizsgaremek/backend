@@ -1,6 +1,6 @@
 import type { UUID } from "../../types";
 import type { User } from "../auth/types";
-import { Shift, ShiftServiceResult as Result } from "./types";
+import { Shift, ShiftServiceResult as Result, TakenShift } from "./types";
 
 import * as m from './model';
 
@@ -15,21 +15,19 @@ export async function createShift(from: Date, to: Date, requiredStaff: number): 
   return [Result.Ok, shift];
 }
 
-export async function bookShift(user: User, shiftId: UUID): Promise<Result> {
+export async function bookShift(user: User, shiftId: UUID): Promise<[Result, TakenShift | null]> {
   const shift = await m.getShiftWithBookings(shiftId);
 
-  console.log(shift);
-
   if (shift == null)
-    return Result.ErrorShiftNotFound;
+    return [Result.ErrorShiftNotFound, null];
 
   if (shift.bookedUsers.length >= shift.requiredStaff)
-    return Result.ErrorShiftOverbooked;
+    return [Result.ErrorShiftOverbooked, null];
 
   if (shift.bookedUsers.includes(user.id!))
-    return Result.ErrorDuplicateBooking;
+    return [Result.ErrorDuplicateBooking, null];
 
-  await m.bookShift(user, shiftId);
+  const booking = await m.bookShift(user, shiftId);
 
-  return Result.Ok; 
+  return [Result.Ok, booking]; 
 }

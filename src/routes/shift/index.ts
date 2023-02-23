@@ -52,14 +52,14 @@ export default function (server: FastifyInstance, _opts: null, done: Function) {
     const res = await s.bookShift(req.user, req.params.id);
 
     return match(res)
-      .with(Result.ErrorShiftNotFound,
+      .with([Result.ErrorShiftNotFound, P._],
         () => rep.error(404, 'Shift not found'))
-      .with(Result.ErrorShiftOverbooked,
+      .with([Result.ErrorShiftOverbooked, P._],
         () => rep.error(403, 'Shift overbooked'))
-      .with(Result.ErrorDuplicateBooking,
+      .with([Result.ErrorDuplicateBooking, P._],
         () => rep.error(403, 'Duplicate booking'))
-      .with(Result.Ok,
-        () => rep.ok())
+      .with([Result.Ok, P.select()],
+        booking => rep.ok(booking))
       .run();
   });
 
