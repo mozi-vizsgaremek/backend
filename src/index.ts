@@ -43,6 +43,7 @@ async function init() {
           version: '0.0.1'
         },
         tags: [
+          { name: 'admin', description: 'Administrative endpoints' },
           { name: 'auth', description: 'Authentication' },
           { name: 'totp', description: 'TOTP Second factor' },
           { name: 'shift', description: 'Work shift management' },

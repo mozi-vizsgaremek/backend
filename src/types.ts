@@ -54,6 +54,9 @@ export function requireRole(role: UserRole = 'customer'): [ { [key: string]: str
   return [ { 'bearer': [ role ] } ];
 }
 
+export const UserRoleSchema = Type.Union(['customer', 'employee', 'manager', 'admin'].map(x => Type.Literal(x)));
+export type UserRoleSchema = Static<typeof UserRoleSchema>;
+
 // common schema types
 
 export const UUID = Type.String({ format: 'uuid' });

@@ -2,10 +2,11 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { ChangePasswordSchema, DeleteSchema, DisableTotpSchema, EnableTotpSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
+import { ChangePasswordSchema, DeleteSchema, DisableTotpSchema, EnableTotpSchema, GetUserSchema, ListUsersSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
 import { issueAccessToken } from "./jwt";
 import { generateTotpUri } from "./totp";
 
+import * as m from './model';
 import * as s from './service';
 
 import Result = UserServiceResult; 
@@ -82,6 +83,25 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
       .run();
   });
 
+  server.delete('/', {
+    schema: DeleteSchema
+  }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep: FastifyReply) => {
+    const res = await s.deleteUser(req.user, req.body);
+
+    return match(res)
+      .with(Result.ErrorInvalidPassword,
+        () => rep.error(401, 'Invalid password'))
+      .with(Result.ErrorTotpRequired,
+        () => rep.error(400, 'TOTP required'))
+      .with(Result.ErrorInvalidTotp,
+        () => rep.error(401, 'Invalid TOTP token'))
+      .with(Result.Ok, () => rep.ok())
+      .run();
+  });
+
+  // TOTP endpoints
+  // TODO: refactor it out into a separate controller
+
   server.post('/totp', {
     schema: EnableTotpSchema
   }, async (req: FastifyRequestTypebox<typeof EnableTotpSchema>, rep: FastifyReply) => {
@@ -129,22 +149,26 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
         () => rep.error(400, 'TOTP not enabled'))
       .with(Result.Ok, () => rep.ok())
       .run();
+  }); 
+
+  // Admin endpoints
+
+  server.get('/admin/', {
+    schema: ListUsersSchema
+  }, async (_req, rep) => {  
+    const users = await m.getUsers();
+    return rep.ok(users);
   });
 
-  server.delete('/', {
-    schema: DeleteSchema
-  }, async (req: FastifyRequestTypebox<typeof DeleteSchema>, rep: FastifyReply) => {
-    const res = await s.deleteUser(req.user, req.body);
+  server.get('/admin/:id', {
+    schema: GetUserSchema
+  }, async (req: FastifyRequestTypebox<typeof GetUserSchema>, rep) => {
+    const user = await m.getUser(req.params.id);
 
-    return match(res)
-      .with(Result.ErrorInvalidPassword,
-        () => rep.error(401, 'Invalid password'))
-      .with(Result.ErrorTotpRequired,
-        () => rep.error(400, 'TOTP required'))
-      .with(Result.ErrorInvalidTotp,
-        () => rep.error(401, 'Invalid TOTP token'))
-      .with(Result.Ok, () => rep.ok())
-      .run();
+    if (!user)
+      return rep.error(404, 'User not found');
+
+    return rep.ok(user);
   });
 
   done();

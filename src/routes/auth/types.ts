@@ -1,6 +1,7 @@
 import { Static, Type } from '@sinclair/typebox';
 import { z } from 'zod';
-import { AccessToken, mkError, Password, RefreshToken, requireRole, TotpCode, Username, UserRole } from '../../types';
+import { AccessToken, mkError, Password, RefreshToken, requireRole, TotpCode, Username, UserRole, UserRoleSchema, UUID } from '../../types';
+import { DateStr } from '../shift/types';
 
 // model types
 
@@ -15,13 +16,28 @@ export const User = z.object({
   totpEnabled: z.optional(z.boolean().default(false)),
   managerId: z.optional(z.string().uuid()),
   hourlyWage: z.optional(z.number()),
-  hireDate: z.optional(z.date()),
-  registrationDate: z.optional(z.date()) 
+  hireDate: z.optional(z.coerce.date()),
+  registrationDate: z.optional(z.coerce.date()) 
 });
 
 export type User = z.infer<typeof User>;
 
 // schemas
+
+export const UserSchema = Type.Object({
+  id: UUID,
+  username: Type.String(),
+  firstName: Type.String(),
+  lastName: Type.String(),
+  role: UserRoleSchema,
+  totpEnabled: Type.Boolean(),
+  managerId: UUID,
+  hourlyWage: Type.Number(),
+  hireDate: Type.Optional(DateStr),
+  registrationDate: Type.Optional(DateStr)
+})
+
+export type UserSchema = Static<typeof UserSchema>;
 
 export const RegisterSchema = {
   summary: 'Register a new user',
@@ -99,7 +115,7 @@ export type ChangePasswordSchema = Static<typeof ChangePasswordSchema.body>;
 
 export const EnableTotpSchema = {
   summary: 'Start TOTP onboarding',
-  tags: [ 'auth', 'totp' ],
+  tags: [ 'totp' ],
   security: requireRole('customer'),
   response: {
     200: Type.Object({
@@ -114,7 +130,7 @@ export const EnableTotpSchema = {
 
 export const VerifyTotpSchema = {
   summary: 'Complete TOTP onboarding',
-  tags: [ 'auth', 'totp' ],
+  tags: [ 'totp' ],
   security: requireRole('customer'),
   body: Type.Object({
     password: Password,
@@ -126,7 +142,7 @@ export type VerifyTotpSchema = Static<typeof VerifyTotpSchema.body>;
 
 export const DisableTotpSchema = {
   summary: 'Disable TOTP two-factor authentication',
-  tags: [ 'auth', 'totp' ],
+  tags: [ 'totp' ],
   security: requireRole('customer'),
   body: Type.Object({
     password: Password,
@@ -147,6 +163,27 @@ export const DeleteSchema = {
 }
 
 export type DeleteSchema = Static<typeof DeleteSchema.body>;
+
+export const ListUsersSchema = {
+  summary: 'List all users. Requires admin role.',
+  tags: [ 'admin' ],
+  security: requireRole('admin'),
+  response: {
+    200: Type.Array(UserSchema) 
+  }
+}
+
+export const GetUserSchema = {
+  summary: 'Get specific user. Requires admin role.',
+  tags: [ 'admin' ],
+  security: requireRole('admin'),
+  params: Type.Object({
+    id: UUID
+  }),
+  response: {
+    200: UserSchema
+  }
+}
 
 // type aliases
 

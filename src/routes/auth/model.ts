@@ -8,8 +8,16 @@ export async function getUserCount(): Promise<number> {
 }
 
 export async function getUser(id: string): Promise<User|null> {
-  return pool.maybeOne(sql.type(User)
+  const user = await pool.maybeOne(sql.type(User)
     `SELECT * FROM users WHERE id = ${id}`);
+
+  if (!user) return null;
+
+  return ({
+    ...user,
+    hireDate: user.hireDate ? new Date(user.hireDate) : undefined,
+    registrationDate: user.registrationDate ? new Date(user.registrationDate) : undefined
+  }); // TODO: find a better way to do this
 }
 
 export async function getUserByNick(username: string): Promise<User|null> {
@@ -60,4 +68,15 @@ export async function setPassword(user: User, hash: string) {
 
 export async function deleteUser(user: User) {
   return pool.query(sql.unsafe`DELETE FROM users WHERE id = ${user.id!}`);
+}
+
+export async function getUsers(): Promise<readonly User[]> {
+  const res = await pool.many(sql.type(User)
+    `SELECT * FROM users`);
+
+  return res.map(x => ({
+    ...x,
+    hireDate: x.hireDate ? new Date(x.hireDate) : undefined,
+    registrationDate: x.registrationDate ? new Date(x.registrationDate) : undefined
+  })); // find a better way to do this
 }
