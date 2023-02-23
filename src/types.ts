@@ -50,7 +50,7 @@ export const UserRoleLevel: { [key: string]: number } = {
   'admin': 3
 }
 
-export function requireRole(role: UserRole): [ { [key: string]: string[] } ] {
+export function requireRole(role: UserRole = 'customer'): [ { [key: string]: string[] } ] {
   return [ { 'bearer': [ role ] } ];
 }
 
