@@ -16,7 +16,7 @@ export async function register(input: RegisterSchema): Promise<[Result, Tokens |
     return [Result.ErrorUsernameTaken, null];  
 
   // TODO: return new user so i don't have to fetch it manually
-  await m.createUser({
+  const user = await m.createUser({
     username: input.username,
     password: await hash(input.password),
     firstName: input.firstName,
@@ -25,7 +25,6 @@ export async function register(input: RegisterSchema): Promise<[Result, Tokens |
     totpEnabled: false
   });
 
-  const user = await m.getUserByNick(input.username);
   const tokens = await issueTokens(user!);
 
   return match(tokens)

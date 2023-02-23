@@ -12,10 +12,11 @@ export async function getUserByNick(username: string): Promise<User|null> {
                        `SELECT * FROM users WHERE username = ${username}`);
 }
 
-export async function createUser(user: User): Promise<void> {
-  await pool.query(sql.unsafe
-                   `INSERT INTO users (username, password, first_name, last_name)
-                    VALUES (${user.username}, ${user.password}, ${user.firstName}, ${user.lastName})`);
+export async function createUser(user: User): Promise<User> {
+  return await pool.one(sql.type(User)
+                       `INSERT INTO users (username, password, first_name, last_name)
+                        VALUES (${user.username}, ${user.password}, ${user.firstName}, ${user.lastName})
+                        RETURNING *`);
 }
 
 export async function userExistsByNick(username: string): Promise<boolean> {
