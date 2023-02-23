@@ -80,4 +80,5 @@ export type TotpSecret = Static<typeof TotpSecret>;
 // Typebox formats
 
 // NOTE: stolen from https://github.com/ajv-validator/ajv-formats/blob/master/src/formats.ts#L105
-Format.Set('date-time', (val) => /^\d\d\d\d-[0-1]\d-[0-3]\dt(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i.test(val));
+Format.Set('date-time', /^\d\d\d\d-[0-1]\d-[0-3]\dt(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i.test);
+Format.Set('uuid', /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test)
