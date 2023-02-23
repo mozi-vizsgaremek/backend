@@ -19,7 +19,7 @@ export async function getShift(id: UUID): Promise<Shift | null> {
 export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings | null> {
   return pool.maybeOne(sql.type(ShiftWithBookings)
     `SELECT s.*, array_agg(st.user_id) AS booked_users
-     FROM shifts s JOIN shifts_taken st ON s.id = st.shift_id
+     FROM shifts s LEFT JOIN shifts_taken st ON s.id = st.shift_id
      WHERE s.id = ${id}
      GROUP BY s.id`);
 }
