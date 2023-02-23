@@ -2,6 +2,11 @@ import { sql, TotpSecret } from '../../types';
 import { pool } from '../../pool';
 import { User } from './types';
 
+export async function getUserCount(): Promise<number> {
+  return (await pool.one(sql.typeAlias('count')
+    `SELECT count(id) FROM users`)).count;
+}
+
 export async function getUser(id: string): Promise<User|null> {
   return pool.maybeOne(sql.type(User)
                        `SELECT * FROM users WHERE id = ${id}`);
@@ -14,8 +19,8 @@ export async function getUserByNick(username: string): Promise<User|null> {
 
 export async function createUser(user: User): Promise<User> {
   return await pool.one(sql.type(User)
-                       `INSERT INTO users (username, password, first_name, last_name)
-                        VALUES (${user.username}, ${user.password}, ${user.firstName}, ${user.lastName})
+                       `INSERT INTO users (username, password, first_name, last_name, role)
+                        VALUES (${user.username}, ${user.password}, ${user.firstName}, ${user.lastName}, ${user.role})
                         RETURNING *`);
 }
 

@@ -22,7 +22,8 @@ export const sql = createSqlTag({
     }),
     void: z.object({}).strict(),
     bool: z.boolean(),
-    number: z.number()
+    number: z.number(),
+    count: z.object({ count: z.number() })
   }
 });
 

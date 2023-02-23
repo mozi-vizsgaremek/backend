@@ -10,10 +10,13 @@ import * as m from './model';
 
 import Result = UserServiceResult;
 import type { TotpSecret } from "../../types";
+import { config } from "../../config";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
   if (await m.userExistsByNick(input.username))
     return [Result.ErrorUsernameTaken, null];  
+
+  const firstUser = (await m.getUserCount()) == 0;
 
   // TODO: return new user so i don't have to fetch it manually
   const user = await m.createUser({
@@ -21,7 +24,7 @@ export async function register(input: RegisterSchema): Promise<[Result, Tokens |
     password: await hash(input.password),
     firstName: input.firstName,
     lastName: input.lastName,
-    role: 'customer',
+    role: config.env == 'dev' && firstUser ? 'admin' : 'customer',
     totpEnabled: false
   });
 
