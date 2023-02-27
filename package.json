@@ -4,11 +4,10 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "watch": "npx tsc --watch",
+    "watch": "npx ts-node-dev src/index.ts --watch",
     "build": "npx tsc",
     "start": "node build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "nodemon": "npx nodemon build/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -36,8 +35,8 @@
     "@tsconfig/node18-strictest": "^1.0.0",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.11.18",
-    "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.5"
   }
 }
