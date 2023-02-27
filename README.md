@@ -68,11 +68,10 @@ An example of all available environment variables can be found in .env.example
 
 ## Running
 
-For automatic reloading, the following should be run (in separate terminals):
+For convenient development, the `watch` script should be used:
 
 ``` bash
-npm run watch
-npm run nodemon 
+npm run watch 
 ```
 
 ### Running in production
