@@ -70,7 +70,7 @@ An example of all available environment variables can be found in .env.example
 
 For convenient development, the `watch` script should be used:
 
-``` bash
+```bash
 npm run watch 
 ```
 
