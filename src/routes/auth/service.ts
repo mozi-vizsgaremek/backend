@@ -18,7 +18,6 @@ export async function register(input: RegisterSchema): Promise<[Result, Tokens |
 
   const firstUser = (await m.getUserCount()) == 0;
 
-  // TODO: return new user so i don't have to fetch it manually
   const user = await m.createUser({
     username: input.username,
     password: await hash(input.password),
