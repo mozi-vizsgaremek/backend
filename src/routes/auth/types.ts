@@ -25,6 +25,7 @@ export type User = z.infer<typeof User>;
 export const UpdateUser = 
   User.partial()
       .omit({ 
+        id: true,
         hireDate: true, 
         registrationDate: true, 
         totpSecret: true
@@ -54,7 +55,7 @@ export const UpdateUserSchema =
       Type.Object({
         ...UserSchema.properties,
         password: Password // add password field
-      }), ['hireDate', 'registrationDate'])); 
+      }), ['id', 'hireDate', 'registrationDate'])); 
 
 export type UpdateUserSchema = Static<typeof UpdateUserSchema>;
 
@@ -206,6 +207,7 @@ export const GetUserSchema = {
 
 export const EditUserSchema = {
   summary: 'Update fields on a specific user. Requires admin role.',
+  description: 'Only the updated fields should be included in the payload.',
   tags: [ 'admin' ],
   security: requireRole('admin'),
   params: Type.Object({
@@ -213,7 +215,7 @@ export const EditUserSchema = {
   }),
   body: UpdateUserSchema,
   response: {
-    200: UserSchema
+    200: Type.Void()
   }
 }
 
