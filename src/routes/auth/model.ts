@@ -80,3 +80,17 @@ export async function getUsers(): Promise<readonly User[]> {
     registrationDate: x.registrationDate ? new Date(x.registrationDate) : undefined
   })); // find a better way to do this
 }
+
+export async function updateUser(user: User) {
+  return pool.query(sql.unsafe
+    `UPDATE users SET 
+      username = ${user.username},
+      first_name = ${user.firstName},
+      last_name = ${user.lastName},
+      password = ${user.password},
+      role = ${user.role},
+      totp_enabled = ${user.totpEnabled ?? false},
+      hourly_wage = ${user.hourlyWage ?? null},
+      manager_id = ${user.managerId ?? null}
+     WHERE id = ${user.id!}`);
+}

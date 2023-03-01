@@ -2,7 +2,9 @@ import type { FastifyInstance, FastifyReply } from "fastify";
 import { match, P } from 'ts-pattern';
 
 import type { FastifyRequestTypebox } from "../../types";
-import { ChangePasswordSchema, DeleteSchema, DisableTotpSchema, EnableTotpSchema, GetUserSchema, ListUsersSchema, LoginSchema, RefreshSchema, RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
+import { ChangePasswordSchema, DeleteSchema, DisableTotpSchema, EditUserSchema, 
+  EnableTotpSchema, GetUserSchema, ListUsersSchema, LoginSchema, RefreshSchema, 
+  RegisterSchema, UserServiceResult, VerifyTotpSchema } from "./types";
 import { issueAccessToken } from "./jwt";
 import { generateTotpUri } from "./totp";
 
@@ -169,6 +171,18 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
       return rep.error(404, 'User not found');
 
     return rep.ok(user);
+  });
+
+  server.patch('/admin/:id', {
+    schema: EditUserSchema    
+  }, async (req: FastifyRequestTypebox<typeof EditUserSchema>, rep) => {
+    const res = await s.updateUser(req.params.id, req.body);
+
+    return match(res)
+      .with(Result.ErrorUserNotFound, 
+        () => rep.error(404, 'User not found'))
+      .with(Result.Ok, 
+        () => rep.ok());
   });
 
   done();

@@ -22,6 +22,15 @@ export const User = z.object({
 
 export type User = z.infer<typeof User>;
 
+export const UpdateUser = 
+  User.partial()
+      .omit({ 
+        hireDate: true, 
+        registrationDate: true, 
+        totpSecret: true
+      });
+
+export type UpdateUser = z.infer<typeof UpdateUser>;
 // schemas
 
 export const UserSchema = Type.Object({
@@ -35,9 +44,19 @@ export const UserSchema = Type.Object({
   hourlyWage: Type.Number(),
   hireDate: Type.Optional(DateStr),
   registrationDate: Type.Optional(DateStr)
-})
+});
 
 export type UserSchema = Static<typeof UserSchema>;
+
+export const UpdateUserSchema =
+  Type.Partial( // make everything optional (nullable)
+    Type.Omit( // remove fields specified below
+      Type.Object({
+        ...UserSchema.properties,
+        password: Password // add password field
+      }), ['hireDate', 'registrationDate'])); 
+
+export type UpdateUserSchema = Static<typeof UpdateUserSchema>;
 
 export const RegisterSchema = {
   summary: 'Register a new user',
@@ -180,6 +199,19 @@ export const GetUserSchema = {
   params: Type.Object({
     id: UUID
   }),
+  response: {
+    200: UserSchema
+  }
+}
+
+export const EditUserSchema = {
+  summary: 'Update fields on a specific user. Requires admin role.',
+  tags: [ 'admin' ],
+  security: requireRole('admin'),
+  params: Type.Object({
+    id: UUID
+  }),
+  body: UpdateUserSchema,
   response: {
     200: UserSchema
   }

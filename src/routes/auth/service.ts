@@ -1,6 +1,6 @@
 import { LoginSchema, RegisterSchema, VerifyTotpSchema, 
          DisableTotpSchema, Tokens, UserServiceResult, 
-         User, ChangePasswordSchema, DeleteSchema } from "./types";
+         User, ChangePasswordSchema, DeleteSchema, UpdateUserSchema, UpdateUser } from "./types";
 import { hash, verify } from 'argon2';
 import { match, P } from 'ts-pattern';
 
@@ -9,7 +9,7 @@ import { issueTokens } from "./jwt";
 import * as m from './model';
 
 import Result = UserServiceResult;
-import type { TotpSecret } from "../../types";
+import type { TotpSecret, UUID } from "../../types";
 import { config } from "../../config";
 
 export async function register(input: RegisterSchema): Promise<[Result, Tokens | null]> {
@@ -137,6 +137,32 @@ export async function deleteUser(user: User, input: DeleteSchema): Promise<Resul
   }
 
   await m.deleteUser(user);
+
+  return Result.Ok;
+}
+
+export async function updateUser(userId: UUID, newUser: UpdateUserSchema): Promise<Result> {
+  const user = await m.getUser(userId);
+    
+  if (!user)
+    return Result.ErrorUserNotFound; 
+   
+  const newUserFields: any = {
+    ...user,
+    ...(newUser as UpdateUser)
+  }
+
+  if (newUserFields.role != 'customer'
+  && !user.hireDate) {
+    newUserFields.hireDate = new Date();
+  }
+   
+  // TODO: check whether field is a hash or not instead of detecting change
+  if (user.password != newUserFields.password) {
+    newUserFields.password = await hash(newUserFields.password); 
+  }
+
+  await m.updateUser(newUserFields as User);
 
   return Result.Ok;
 }
