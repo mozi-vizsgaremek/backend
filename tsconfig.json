@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "build",
+    "lib": [ "ES2021", "ESNext" ],
     "strict": true
-  },
-  "extends": "@tsconfig/node18-strictest/tsconfig.json"
+  }
 }
