@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
+import { config as loadEnv } from 'dotenv';
 import { match, P } from 'ts-pattern';
-dotenv.config();
+loadEnv();
 
 export type EnvVals = 'dev'|'prod';
 
