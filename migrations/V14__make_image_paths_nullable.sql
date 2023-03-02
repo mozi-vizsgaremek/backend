@@ -1,0 +1,2 @@
+ALTER TABLE movies ALTER COLUMN thumbnail_path DROP NOT NULL;
+ALTER TABLE movies ALTER COLUMN banner_path DROP NOT NULL; 
