@@ -11,6 +11,9 @@ declare module 'fastify' {
 
 export function registerAuthHook(server: FastifyInstance) {
   server.addHook('onRequest', async (req: FastifyRequest, rep: FastifyReply) => {
+    if (!req.routeSchema)
+      return rep.error(404, 'Not found');
+
     if (!req.routeSchema.security) return;
 
     // actual warcrime btw
