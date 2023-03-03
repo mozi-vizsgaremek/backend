@@ -11,7 +11,8 @@ export type Config = {
   jwtIssuer: string,
   env: EnvVals,
   accessTokenExpiration: number, // stored in seconds
-  refreshTokenExpiration: number // ditto
+  refreshTokenExpiration: number, // ditto
+  uploadDirectory: string
 }
 
 function readVal<T>(key: string, caster: (x: string) => T, fallback: T | undefined = undefined): T {
@@ -41,4 +42,5 @@ export const config: Config = {
   env: readVal('ENV', envCaster, 'prod'),
   accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960) * 60, // convert minutes to seconds
   refreshTokenExpiration: readVal('REFRESH_TOKEN_EXPIRATION', Number, 5) * 60,
+  uploadDirectory: readVal('UPLOAD_DIRECTORY', String)
 }
