@@ -1,4 +1,5 @@
 import { config as loadEnv } from 'dotenv';
+import { join } from 'path';
 import { match, P } from 'ts-pattern';
 loadEnv();
 
@@ -42,5 +43,5 @@ export const config: Config = {
   env: readVal('ENV', envCaster, 'prod'),
   accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960) * 60, // convert minutes to seconds
   refreshTokenExpiration: readVal('REFRESH_TOKEN_EXPIRATION', Number, 5) * 60,
-  uploadDirectory: readVal('UPLOAD_DIRECTORY', String)
+  uploadDirectory: join(__dirname, readVal('UPLOAD_DIRECTORY', String))
 }
