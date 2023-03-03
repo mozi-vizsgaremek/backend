@@ -1,1 +1,1 @@
-ALTER TABLE movies ADD COLUMN movies TEXT;
+ALTER TABLE movies ADD COLUMN description TEXT;
