@@ -15,6 +15,7 @@ export const Movie = z.object({
   id: z.string().uuid(),
   title: z.string(),
   subtitle: z.string(),
+  description: z.string(),
   durationMins: z.number(),
   thumbnailPath: z.string(),
   bannerPath: z.string()
@@ -28,9 +29,13 @@ export const MovieSchema = Type.Object({
   id: UUID,
   title: Type.String(),
   subtitle: Type.String(),
-  durationMins: Type.Integer(),
+  description: Type.String(),
+  durationMins: Type.Integer({ minimum: 1 }),
   thumbnailUrl: Type.Optional(Type.String()),
   bannerUrl: Type.Optional(Type.String())
 });
 
 export type MovieSchema = Static<typeof MovieSchema>;
+
+export const ImageType = Type.Union(['thumbnail', 'banner'].map(x => Type.Literal(x)));
+export type ImageType = Static<typeof ImageType>;

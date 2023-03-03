@@ -1,13 +1,14 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from "@sinclair/typebox";
 import { match, P } from 'ts-pattern';
-import { requireRole, UUID } from "../../types";
+import { Base64String, requireRole, UUID } from "../../types";
 
 import { MovieServiceResult as Result } from './types';
 
 import * as m from './model';
 import * as s from './service';
 import * as t from './types';
+import { brotliDecompressSync } from 'zlib';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   
@@ -52,13 +53,18 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       summary: 'Create a new movie. Requires admin role',
       tags: [ 'movie' ],
       security: requireRole('admin'),
-      body: Type.Pick(t.MovieSchema, ['title', 'subtitle', 'durationMins']),
+      body: Type.Pick(t.MovieSchema, ['title', 'subtitle', 'description', 'durationMins']),
       response: {
         200: t.MovieSchema
       }
     }
   }, async (req, rep) => {
-    const movie = await m.createMovie(req.body.title, req.body.subtitle, req.body.durationMins);
+    const movie = await m.createMovie(
+      req.body.title, 
+      req.body.subtitle, 
+      req.body.description, 
+      req.body.durationMins);
+
     return rep.ok(movie);
   });
 
@@ -74,6 +80,51 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     }
   }, async (req, rep) => {
     await m.deleteMovie(req.params.id);
+    return rep.ok();
+  });
+
+  server.post('/:id/images', {
+    schema: {
+      summary: 'Upload images for movie specified by `id`.',
+      description: 'Both fields are base64 encoded image binaries. Replaces old image if a new one is given.',
+      tags: [ 'movie' ],
+      security: requireRole('admin'),
+      params: Type.Object({
+        id: UUID
+      }),
+      body: Type.Object({
+        // passing images as base64 strings might be a terrible workaround 
+        // that will come back to haunt me later down the line
+        banner: Type.Optional(Base64String),
+        thumbnail: Type.Optional(Base64String)
+      })
+    } 
+  }, async (req, rep) => {
+    for (const key of Object.keys(req.body)) {
+      if (!key) continue;
+
+      const ckey = key as keyof (typeof req.body);
+
+      if (!req.body[ckey]) continue;
+
+      await s.uploadImage(req.params.id, key, req.body[ckey]!);
+    }
+
+    return rep.ok();
+  });
+
+  server.delete('/:id/images/:imageSelector', {
+    schema: {
+      summary: 'Delete the `:imageSelector` image from movie with `:id`',
+      tags: [ 'movie' ],
+      security: requireRole('admin'),
+      params: Type.Object({
+        id: UUID,
+        imageSelector: t.ImageType
+      })
+    }
+  }, async (req, rep) => {
+    await s.deleteImage(req.params.id, req.params.imageSelector);
     return rep.ok();
   });
 }
