@@ -14,7 +14,7 @@ export async function getMovie(id: UUID): Promise<Movie | null> {
 
 export async function createMovie(title: string, subtitle: string, durationMins: number): Promise<Movie> {
   return pool.one(sql.type(Movie)
-    `INSERT INTO movies (title, subtitle, durationMins)
+    `INSERT INTO movies (title, subtitle, duration_mins)
      VALUES (${title}, ${subtitle}, ${durationMins})
      RETURNING *`);
 }
