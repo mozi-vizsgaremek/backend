@@ -55,8 +55,21 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       }
     }
   }, async (req, rep) => {
-    
+    const movie = await m.createMovie(req.body.title, req.body.subtitle, req.body.durationMins);
+    return rep.ok(movie);
+  });
 
+  server.delete('/:id', {
+    schema: {
+      summary: 'Delete a movie. Requires admin role',
+      description: 'Silently fails if movie specified by `id` didn\'t exist beforehand.',
+      security: requireRole('admin'),
+      params: Type.Object({
+        id: UUID
+      })
+    }
+  }, async (req, rep) => {
+    await m.deleteMovie(req.params.id);
     return rep.ok();
   });
 }

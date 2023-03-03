@@ -23,3 +23,12 @@ export async function getMovie(id: UUID): Promise<[Result, Movie | null]> {
 
   return [Result.Ok, movie];
 }
+
+/*
+export async function createMovie(title: string, subtitle: string, durationMins: number): 
+  Promise<[Result, Movie | null]> {
+  const movie = await m.createMovie(title, subtitle, durationMins);
+
+
+}
+*/
