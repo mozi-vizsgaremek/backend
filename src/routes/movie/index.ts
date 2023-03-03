@@ -14,6 +14,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   server.get('/', {
     schema: {
       summary: 'Return a list of all movies',
+      tags: [ 'movie' ],
       response: {
         200: Type.Array(t.MovieSchema)
       }
@@ -27,6 +28,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   server.get('/:id', {
     schema: {
       summary: 'Return the specified movie',
+      tags: [ 'movie' ],
       params: Type.Object({
         id: UUID
       }),
@@ -48,6 +50,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   server.post('/', {
     schema: {
       summary: 'Create a new movie. Requires admin role',
+      tags: [ 'movie' ],
       security: requireRole('admin'),
       body: Type.Pick(t.MovieSchema, ['title', 'subtitle', 'durationMins']),
       response: {
@@ -63,6 +66,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     schema: {
       summary: 'Delete a movie. Requires admin role',
       description: 'Silently fails if movie specified by `id` didn\'t exist beforehand.',
+      tags: [ 'movie' ],
       security: requireRole('admin'),
       params: Type.Object({
         id: UUID
