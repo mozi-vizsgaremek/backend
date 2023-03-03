@@ -62,6 +62,9 @@ export type UserRoleSchema = Static<typeof UserRoleSchema>;
 export const UUID = Type.String({ format: 'uuid' });
 export type UUID = Static<typeof UUID>;
 
+export const Base64String = Type.String({ pattern: '^[a-zA-Z0-9+/]+={,2}$' });
+export type Base64String = Static<typeof Base64String>;
+
 export const Username = Type.String({ minLength: 4, maxLength: 32, pattern: '^([A-Za-z0-9_-]){4,32}$' });
 export type Username = Static<typeof Username>; 
 
