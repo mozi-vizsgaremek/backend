@@ -13,6 +13,7 @@ import type { DatabasePool } from 'slonik';
 import { decoratePool } from './pool'
 import { decorateUtils } from './utils'
 import { registerAuthHook } from './routes/auth/hook'
+import { createUploadDirectory } from './routes/movie/files'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -85,6 +86,9 @@ async function init() {
   server.register(autoload, {
     dir: join(__dirname, 'routes')
   });
+
+  // ensure upload directory exists
+  await createUploadDirectory();
 
   server.listen({ port: config.port, host: '0.0.0.0' }, () => {
     console.log(`Server listening on ${config.port}`);
