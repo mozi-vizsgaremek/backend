@@ -28,6 +28,6 @@ export async function saveImage(payload: string): Promise<string> { // returns f
   return hash;
 }
 
-export async function deleteFile(hash: string) {
+export async function deleteImage(hash: string) {
   await rm(join(config.uploadDirectory, hash));
 }
