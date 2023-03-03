@@ -43,7 +43,7 @@ export async function createShift(shift: CreateShift): Promise<Shift> {
 }
 
 export async function deleteShift(id: UUID) {
-  return await pool.query(sql.unsafe
+  await pool.query(sql.unsafe
     `DELETE FROM shifts WHERE id = ${id}`);
 }
 
