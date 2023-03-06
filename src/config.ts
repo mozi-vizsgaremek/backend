@@ -13,7 +13,8 @@ export type Config = {
   env: EnvVals,
   accessTokenExpiration: number, // stored in seconds
   refreshTokenExpiration: number, // ditto
-  uploadDirectory: string
+  uploadDirectory: string,
+  baseUrl: string
 }
 
 function readVal<T>(key: string, caster: (x: string) => T, fallback: T | undefined = undefined): T {
@@ -43,5 +44,6 @@ export const config: Config = {
   env: readVal('ENV', envCaster, 'prod'),
   accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960) * 60, // convert minutes to seconds
   refreshTokenExpiration: readVal('REFRESH_TOKEN_EXPIRATION', Number, 5) * 60,
-  uploadDirectory: join(__dirname, readVal('UPLOAD_DIRECTORY', String))
+  uploadDirectory: join(__dirname, readVal('UPLOAD_DIRECTORY', String)),
+  baseUrl: readVal('BASE_URL', String)
 }
