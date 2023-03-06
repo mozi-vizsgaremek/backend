@@ -44,14 +44,14 @@ export async function getMovie(id: UUID): Promise<[Result, MovieSchema | null]> 
     return [Result.Ok, fixMovie(movie)];
 }
 
-/*
-export async function createMovie(title: string, subtitle: string, durationMins: number): 
-  Promise<[Result, Movie | null]> {
-  const movie = await m.createMovie(title, subtitle, durationMins);
+export async function deleteMovie(id: UUID) {
+  const movie = await m.deleteMovie(id);
 
+  if (!movie) return;
 
+  await deleteImageFromDisk(movie.thumbnailPath);
+  await deleteImageFromDisk(movie.bannerPath);
 }
-*/
 
 export async function getImage(id: UUID, imgType: ImageType): Promise<[Result, string | null]> {
   const getter = match(imgType)
@@ -78,6 +78,15 @@ export async function uploadImage(id: UUID, imgType: ImageType, imgData: string)
   return [Result.Ok, imageHash];
 }
 
+async function deleteImageFromDisk(hash: string) {
+  // delete image from disk if no movies refer to it
+  const count = await m.imageUseCount(hash);
+
+  if (count <= 0) {
+    await f.deleteImage(hash);
+  }
+}
+
 export async function deleteImage(id: UUID, imgType: ImageType): Promise<Result> {
   const img = await getImage(id, imgType);
 
@@ -88,8 +97,8 @@ export async function deleteImage(id: UUID, imgType: ImageType): Promise<Result>
     .with('banner', async () => m.updateBanner(id, null))
     .with('thumbnail', async () => m.updateThumbnail(id, null))
     .run();
-
-  // TODO: delete image from disk if no movies refer to it
+   
+  await deleteImageFromDisk(img[1]!);
 
   return Result.Ok;
 }

@@ -79,7 +79,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       })
     }
   }, async (req, rep) => {
-    await m.deleteMovie(req.params.id);
+    await s.deleteMovie(req.params.id);
     return rep.ok();
   });
 

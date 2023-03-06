@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { config } from '../../config';
 import { access, constants, mkdir, rm, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 
 function decodeBase64Payload(payload: string): [string, Buffer] {
   const buf = Buffer.from(payload, 'base64');
@@ -29,5 +30,9 @@ export async function saveImage(payload: string): Promise<string> { // returns f
 }
 
 export async function deleteImage(hash: string) {
+  const path = join(config.uploadDirectory, hash);
+
+  if (!existsSync(path)) return;
+
   await rm(join(config.uploadDirectory, hash));
 }

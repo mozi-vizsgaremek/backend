@@ -20,8 +20,9 @@ export async function createMovie(title: string, subtitle: string, description: 
      RETURNING *`);
 }
 
-export async function deleteMovie(id: UUID) {
-  return pool.query(sql.unsafe`DELETE FROM movies WHERE id = ${id}`);
+export async function deleteMovie(id: UUID): Promise<Movie | null> {
+  return pool.maybeOne(sql.type(Movie)
+    `DELETE FROM movies WHERE id = ${id} RETURNING *`);
 }
 
 export async function getThumbnail(id: UUID): Promise<string | null> {
@@ -40,4 +41,10 @@ export async function updateThumbnail(id: UUID, hash: string | null = null) {
 
 export async function updateBanner(id: UUID, hash: string | null = null) {
   await pool.query(sql.unsafe`UPDATE movies SET banner_path = ${hash} WHERE id = ${id}`);
+}
+
+export async function imageUseCount(hash: string): Promise<number> {
+  return (await pool.one(sql.typeAlias('count')
+    `SELECT count(*) as count FROM movies 
+     WHERE thumbnail_path = ${hash} OR banner_path = ${hash}`)).count;
 }
