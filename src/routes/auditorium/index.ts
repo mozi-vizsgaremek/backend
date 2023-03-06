@@ -1,14 +1,10 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from "@sinclair/typebox";
-import { match, P } from 'ts-pattern';
-import { Base64String, requireRole, UUID } from "../../types";
-
-// import { MovieServiceResult as Result } from './types';
+import { requireRole, UUID } from "../../types";
 
 import * as m from './model';
 import * as s from './service';
 import * as t from './types';
-// import { config } from '../../config';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   server.get('/', {
