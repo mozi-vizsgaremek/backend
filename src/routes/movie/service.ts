@@ -1,12 +1,25 @@
-import { ImageType, Movie, MovieServiceResult as Result } from './types';
+import { ImageType, Movie, MovieSchema, MovieServiceResult as Result } from './types';
 import * as m from './model';
 import { UUID } from '../../types';
 import { match } from 'ts-pattern';
 import { saveImage } from './files';
 
 import * as f from './files';
+import { config } from '../../config';
 
-export async function getMovies(): Promise<readonly Movie[]> {
+function fixMovie(movie: Movie): MovieSchema {
+  let movieSchema: MovieSchema = movie as MovieSchema;
+
+  if (movie.bannerPath)
+    movieSchema.bannerUrl = getImageUrl(movie.bannerPath);
+    
+  if (movie.thumbnailPath)
+    movieSchema.thumbnailUrl = getImageUrl(movie.thumbnailPath);
+
+  return movieSchema;
+}
+
+export async function getMovies(): Promise<readonly MovieSchema[]> {
   let movies: readonly Movie[];
 
   try {
@@ -15,16 +28,20 @@ export async function getMovies(): Promise<readonly Movie[]> {
     return [];
   }
 
-  return movies;
+  return movies.map(x => fixMovie(x));
 }
 
-export async function getMovie(id: UUID): Promise<[Result, Movie | null]> {
+export function getImageUrl(hash: string): string {
+  return `${config.baseUrl}/u/${hash}`;
+}
+
+export async function getMovie(id: UUID): Promise<[Result, MovieSchema | null]> {
   const movie = await m.getMovie(id);
 
   if (!movie)
     return [Result.ErrorMovieNotFound, null];
 
-  return [Result.Ok, movie];
+    return [Result.Ok, fixMovie(movie)];
 }
 
 /*
