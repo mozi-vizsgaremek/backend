@@ -74,6 +74,8 @@ For convenient development, the `watch` script should be used:
 npm run watch 
 ```
 
+Alternatively, using nodemon and `tsc --watch` in tandem is possible, and preferred on some platforms.
+
 ### Running in production
 
 Production deployments should use the provided Dockerfile. Alternatively, `npm run start` will start the compiled version.
