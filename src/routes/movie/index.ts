@@ -8,7 +8,6 @@ import { MovieServiceResult as Result } from './types';
 import * as m from './model';
 import * as s from './service';
 import * as t from './types';
-import { brotliDecompressSync } from 'zlib';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   
@@ -97,9 +96,17 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
         // that will come back to haunt me later down the line
         banner: Type.Optional(Base64String),
         thumbnail: Type.Optional(Base64String)
-      })
+      }),
+      response: {
+        200: Type.Object({
+          bannerHash: Type.Optional(Base64String),
+          thumbnailHash: Type.Optional(Base64String)
+        })
+      }
     } 
   }, async (req, rep) => {
+    let resp: any = {};
+
     for (const key of Object.keys(req.body)) {
       if (!key) continue;
 
@@ -107,10 +114,15 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
 
       if (!req.body[ckey]) continue;
 
-      await s.uploadImage(req.params.id, key, req.body[ckey]!);
+      const result = await s.uploadImage(req.params.id, key, req.body[ckey]!);
+
+      if (result[0] != Result.Ok)
+        return rep.error(500, 'Failed to upload image');      
+
+      resp[`${key}Hash`] = result[1];
     }
 
-    return rep.ok();
+    return rep.ok(resp);
   });
 
   server.delete('/:id/images/:imageSelector', {
