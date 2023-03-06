@@ -56,6 +56,7 @@ async function init() {
           { name: 'shift', description: 'Work shift management' },
           { name: 'booking', description: 'Shift booking management' },
           { name: 'movie', description: 'Movies available for scheduling' },
+          { name: 'auditorium', description: 'Screening rooms' },
           { name: 'test', description: 'Testing' }
         ],
         components: {
