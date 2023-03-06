@@ -1,7 +1,7 @@
 // import { Static, Type } from '@sinclair/typebox';
 import { Static, Type } from '@sinclair/typebox';
 import { z } from 'zod';
-import { requireRole, UUID } from '../../types';
+import { DateStr, DateTimeStr, requireRole, UUID } from '../../types';
 
 export const Shift = z.object({
   id: z.string().uuid(),
@@ -36,10 +36,6 @@ export const ExtendedTakenShift =
 export type ExtendedTakenShift = z.infer<typeof ExtendedTakenShift>;
 
 // schemas
-
-export const DateStr = Type.String({ pattern: '^\\d{4}-[01][1-9]-[0123][1-9]$' }); // date-time and date formats are undefined for some reason
-export const DateTimeStr = Type.String({ format: 'date-time', description: "Unix timestamp with milisecond precision" });
-// TODO: https://github.com/sinclairzx81/typebox/issues/304 
 
 export const CreateSchema = {
   summary: 'Create a new shift. Requires manager role',

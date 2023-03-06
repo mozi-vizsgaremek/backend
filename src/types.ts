@@ -89,3 +89,7 @@ export type TotpSecret = Static<typeof TotpSecret>;
 // NOTE: stolen from https://github.com/ajv-validator/ajv-formats/blob/master/src/formats.ts#L105
 Format.Set('date-time', val => /^\d\d\d\d-[0-1]\d-[0-3]\dt(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i.test(val));
 Format.Set('uuid', val => /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(val));
+
+export const DateStr = Type.String({ pattern: '^\\d{4}-[01][1-9]-[0123][1-9]$' }); // date-time and date formats are undefined for some reason
+export const DateTimeStr = Type.String({ format: 'date-time', description: "Unix timestamp with milisecond precision" });
+// TODO: https://github.com/sinclairzx81/typebox/issues/304 
