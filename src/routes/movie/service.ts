@@ -50,13 +50,15 @@ export async function getImage(id: UUID, imgType: ImageType): Promise<[Result, s
   return [Result.Ok, img];
 }
 
-export async function uploadImage(id: UUID, imgType: ImageType, imgData: string) {
+export async function uploadImage(id: UUID, imgType: ImageType, imgData: string): Promise<[Result, string | null]> {
   const imageHash = await saveImage(imgData);
 
   await match(imgType)
     .with('banner', async () => m.updateBanner(id, imageHash))
     .with('thumbnail', async () => m.updateThumbnail(id, imageHash))
     .run();
+
+  return [Result.Ok, imageHash];
 }
 
 export async function deleteImage(id: UUID, imgType: ImageType): Promise<Result> {
@@ -69,6 +71,8 @@ export async function deleteImage(id: UUID, imgType: ImageType): Promise<Result>
     .with('banner', async () => m.updateBanner(id, null))
     .with('thumbnail', async () => m.updateThumbnail(id, null))
     .run();
+
+  // TODO: delete image from disk if no movies refer to it
 
   return Result.Ok;
 }
