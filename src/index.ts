@@ -8,6 +8,7 @@ import autoload from '@fastify/autoload'
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import cors from '@fastify/cors';
+import staticServe from '@fastify/static';
 
 import type { DatabasePool } from 'slonik';
 import { decoratePool } from './pool'
@@ -32,6 +33,11 @@ async function init() {
 
   server.register(cors, {
     origin: config.env == 'dev' ? /^.*/ : /.*leventea\.hu.*/
+  });
+
+  server.register(staticServe, {
+    root: config.uploadDirectory,
+    prefix: '/u/'
   });
 
   if (config.env == 'dev') {
