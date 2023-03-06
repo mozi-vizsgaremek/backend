@@ -21,6 +21,8 @@ export async function saveImage(payload: string): Promise<string> { // returns f
   const [hash, buf] = decodeBase64Payload(payload);   
   const path = join(config.uploadDirectory, hash);
 
+  // TODO: check mime type, only allow images to be uploaded
+
   await writeFile(path, new Uint8Array(buf));
 
   return hash;

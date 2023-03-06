@@ -8,6 +8,7 @@ import { MovieServiceResult as Result } from './types';
 import * as m from './model';
 import * as s from './service';
 import * as t from './types';
+import { config } from '../../config';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   
@@ -100,7 +101,9 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       response: {
         200: Type.Object({
           bannerHash: Type.Optional(Base64String),
-          thumbnailHash: Type.Optional(Base64String)
+          bannerUrl: Type.Optional(Type.String()),
+          thumbnailHash: Type.Optional(Base64String),
+          thumbnailUrl: Type.Optional(Type.String()) 
         })
       }
     } 
@@ -120,6 +123,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
         return rep.error(500, 'Failed to upload image');      
 
       resp[`${key}Hash`] = result[1];
+      resp[`${key}Url`] = `${config.baseUrl}/u/${result[1]}`;
     }
 
     return rep.ok(resp);
