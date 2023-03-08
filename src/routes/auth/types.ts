@@ -1,7 +1,6 @@
 import { Static, Type } from '@sinclair/typebox';
 import { z } from 'zod';
-import { AccessToken, mkError, Password, RefreshToken, requireRole, TotpCode, Username, UserRole, UserRoleSchema, UUID } from '../../types';
-import { DateStr } from '../shift/types';
+import { AccessToken, DateStr, mkError, Password, RefreshToken, requireRole, TotpCode, Username, UserRole, UserRoleSchema, UUID } from '../../types';
 
 // model types
 
