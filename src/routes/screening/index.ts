@@ -8,15 +8,38 @@ import * as t from './types';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   server.get('/', {
+    schema: {
+      summary: 'List all screenings',
+      tags: [ 'screening' ],
+      response: {
+        200: t.Screening
+      }
+    }
+  }, async (_req, rep) => {
+    const res = await s.getScreenings();
 
-  }, async (req, rep) => {
-
+    rep.ok(res);
   });
 
   server.get('/:id', {
-
+    schema: {
+      summary: 'Get specific screening',
+      tags: [ 'screening' ],
+      params: Type.Object({
+        id: UUID
+      }),
+      response: {
+        200: Type.Array(t.ScreeningSchema)
+      }
+    }
   }, async (req, rep) => {
+    const res = await m.getScreening(req.params.id);
 
+    if (!res) {
+      return rep.error(404, 'Screening not found');
+    }
+
+    return rep.ok(res);
   });
 
   server.post('/', {
