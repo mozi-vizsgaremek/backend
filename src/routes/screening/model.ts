@@ -12,6 +12,13 @@ export async function getScreenings(): Promise<readonly Screening[]> {
     `SELECT * FROM screenings`);
 }
 
-// export async function createScreening(movieId: UUID, auditoriumId: UUID, time: Date): Promise<Screening> {
-  // TODO: implement  
-// }
+export async function createScreening(movieId: UUID, auditoriumId: UUID, time: Date): Promise<Screening> {
+  return pool.one(sql.type(Screening)
+    `INSERT INTO screenings (movie_id, auditorium_id, time) 
+     VALUES (${movieId}, ${auditoriumId}, ${sql.date(time)})
+     RETURNING *`);
+}
+
+export async function deleteScreening(id: UUID) {
+  return pool.query(sql.unsafe`DELETE FROM screenings WHERE id = ${id}`);
+}

@@ -43,15 +43,34 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
   });
 
   server.post('/', {
-
+    schema: {
+      summary: 'Create new screening, requires manager role.',
+      security: requireRole('manager'),
+      body: Type.Pick(t.ScreeningSchema, ['movieId', 'auditoriumId', 'time']),
+      response: {
+        200: t.ScreeningSchema
+      }
+    }
   }, async (req, rep) => {
+    const res = await m.createScreening(req.body.movieId, 
+      req.body.auditoriumId, 
+      new Date(req.body.time));
 
+    return rep.ok(res);
   });
 
   server.delete('/:id', {
-
+    schema: {
+      summary: 'Delete screening with given id, requires manager role.',
+      security: requireRole('manager'),
+      params: Type.Object({
+        id: UUID
+      })
+    }
   }, async (req, rep) => {
+    await m.deleteScreening(req.params.id);
 
+    return rep.ok();
   });
 }
 
