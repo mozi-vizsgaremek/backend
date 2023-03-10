@@ -12,7 +12,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       summary: 'List all screenings',
       tags: [ 'screening' ],
       response: {
-        200: t.Screening
+        200: Type.Array(t.ScreeningSchema)
       }
     }
   }, async (_req, rep) => {
