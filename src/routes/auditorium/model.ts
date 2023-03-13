@@ -12,9 +12,9 @@ export async function getAuditoriums(): Promise<readonly Auditorium[]> {
     `SELECT * FROM auditoriums`);
 }
 
-export async function createAuditorium(name: string): Promise<Auditorium> {
+export async function createAuditorium(name: string, seats: number): Promise<Auditorium> {
   return pool.one(sql.type(Auditorium)
-    `INSERT INTO auditoriums (name) VALUES (${name}) RETURNING *`);
+    `INSERT INTO auditoriums (name, seats) VALUES (${name}, ${seats}) RETURNING *`);
 }
 
 export async function deleteAuditorium(id: UUID): Promise<Auditorium | null> {

@@ -1,0 +1,1 @@
+ALTER TABLE auditoriums ADD COLUMN seats INTEGER NOT NULL;

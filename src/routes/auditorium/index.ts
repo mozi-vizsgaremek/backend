@@ -54,7 +54,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       }
     }
   }, async (req, rep) => {
-    const res = await m.createAuditorium(req.body.name);
+    const res = await m.createAuditorium(req.body.name, req.body.seats);
 
     return rep.ok(res);
   });
