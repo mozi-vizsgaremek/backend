@@ -31,3 +31,21 @@ export function decorateUtils(server: FastifyInstance) {
 export function isString(data: any): data is string {
   return typeof data === 'string';
 }
+
+export function unwrapCount(count: { count: number } | null): number|null {
+  return count == null ? null : count.count;
+}
+
+export function wrapListGetter<T>(fn: () => Promise<readonly T[]>): () => Promise<readonly T[]> {
+  return async () => {
+    let res: readonly T[];
+
+    try {
+      res = await fn();
+    } catch {
+      return [];
+    }
+
+    return res;
+  }
+}
