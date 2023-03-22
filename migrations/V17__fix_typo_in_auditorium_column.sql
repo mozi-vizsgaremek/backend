@@ -1,0 +1,1 @@
+ALTER TABLE screenings RENAME COLUMN auditorum_id TO auditorium_id;
