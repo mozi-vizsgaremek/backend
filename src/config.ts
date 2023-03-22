@@ -42,7 +42,7 @@ export const config: Config = {
   jwtSecret: readVal('JWT_SECRET', String),
   jwtIssuer: readVal('JWT_ISSUER', String, 'MoziBackend'),
   env: readVal('ENV', envCaster, 'prod'),
-  accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960) * 60, // convert minutes to seconds
+  accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960 /* 365.25 days */) * 60, // convert minutes to seconds
   refreshTokenExpiration: readVal('REFRESH_TOKEN_EXPIRATION', Number, 5) * 60,
   uploadDirectory: join(__dirname, readVal('UPLOAD_DIRECTORY', String)),
   baseUrl: readVal('BASE_URL', String)
