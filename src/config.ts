@@ -10,6 +10,7 @@ export type Config = {
   postgresConnectionString: string,
   jwtSecret: string,
   jwtIssuer: string,
+  totpIssuer: string,
   env: EnvVals,
   accessTokenExpiration: number, // stored in seconds
   refreshTokenExpiration: number, // ditto
@@ -45,5 +46,6 @@ export const config: Config = {
   accessTokenExpiration: readVal('ACCESS_TOKEN_EXPIRATION', Number, 525960 /* 365.25 days */) * 60, // convert minutes to seconds
   refreshTokenExpiration: readVal('REFRESH_TOKEN_EXPIRATION', Number, 5) * 60,
   uploadDirectory: join(__dirname, readVal('UPLOAD_DIRECTORY', String)),
-  baseUrl: readVal('BASE_URL', String)
+  baseUrl: readVal('BASE_URL', String),
+  totpIssuer: readVal('TOTP_ISSUER', String)
 }
