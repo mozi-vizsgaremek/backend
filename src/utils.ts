@@ -36,12 +36,14 @@ export function unwrapCount(count: { count: number } | null): number|null {
   return count == null ? null : count.count;
 }
 
-export function wrapListGetter<T>(fn: () => Promise<readonly T[]>): () => Promise<readonly T[]> {
-  return async () => {
+export function wrapListGetter<T, R>(fn: (...args: R[]) => Promise<readonly T[]>): 
+  (...args: R[]) => Promise<readonly T[]> {
+
+  return async (...args: R[]) => {
     let res: readonly T[];
 
     try {
-      res = await fn();
+      res = await fn(...args);
     } catch {
       return [];
     }
