@@ -46,6 +46,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     schema: {
       summary: 'Create new screening, requires manager role.',
       security: requireRole('manager'),
+      tags: [ 'screening' ],
       body: Type.Pick(t.ScreeningSchema, ['movieId', 'auditoriumId', 'time']),
       response: {
         200: t.ScreeningSchema
@@ -63,6 +64,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     schema: {
       summary: 'Delete screening with given id, requires manager role.',
       security: requireRole('manager'),
+      tags: [ 'screening' ],
       params: Type.Object({
         id: UUID
       })
