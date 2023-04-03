@@ -32,7 +32,12 @@ export async function getReservation(reservationId: UUID): Promise<Reservation |
     `SELECT * FROM reservations WHERE id = ${reservationId}`);
 }
 
-export async function getReservations(): Promise<readonly Reservation[]> {
+export async function getReservations(userId: UUID): Promise<readonly Reservation[]> {
+  return await pool.many(sql.type(Reservation)
+    `SELECT * FROM reservations WHERE user_id = ${userId}`);
+}
+
+export async function getAllReservations(): Promise<readonly Reservation[]> {
   return await pool.many(sql.type(Reservation)
     `SELECT * FROM reservations`);
 }
