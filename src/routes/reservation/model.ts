@@ -41,8 +41,3 @@ export async function getAllReservations(): Promise<readonly Reservation[]> {
   return await pool.many(sql.type(Reservation)
     `SELECT * FROM reservations`);
 }
-
-export async function getReservationsByUser(userId: UUID): Promise<readonly Reservation[]> {
-  return await pool.many(sql.type(Reservation)
-    `SELECT * FROM reservations WHERE user_id = ${userId}`);
-}

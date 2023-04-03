@@ -31,17 +31,35 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     return rep.ok(res);
   });
 
-  server.post('/', {
+  server.post('/:id', {
     schema: {
-      summary: 'Reserve n amount of seats',
+      summary: 'Reserve n amount of seats for movie with `id`',
       security: requireRole('customer'),
       tags: [ 'reservation' ],
+      params: Type.Object({
+        id: UUID
+      }),
       body: Type.Object({
         seats: Type.Number({ min: 1 })
       })
     }
   }, async (req, rep) => {
     
+  });
+
+  server.delete('/:id', {
+    schema: {
+      summary: 'Delete a reservation',
+      security: requireRole('customer'),
+      tags: [ 'reservation' ],
+      params: Type.Object({
+        id: UUID
+      })
+    }
+  }, async (req, rep) => {
+    await m.deleteReservation(req.params.id);
+
+    rep.ok();
   });
 }
 
