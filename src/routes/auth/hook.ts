@@ -31,7 +31,7 @@ export function registerAuthHook(server: FastifyInstance) {
     const minAccess = UserRoleLevel[bearerAccess[0] ?? 'admin'] ?? UserRoleLevel['admin'];
 
     if (!req.headers.authorization)
-      return rep.error(400, 'Authorizaion header not found in request');
+      return rep.error(400, 'Authorization header not found in request');
 
     if (!req.headers.authorization.match(/^bearer/i))
       return rep.error(400, 'Authorization header missing bearer prefix');
