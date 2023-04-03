@@ -3,7 +3,6 @@ import { Type } from "@sinclair/typebox";
 import { requireRole, UUID } from "../../types";
 
 import * as m from './model';
-import * as s from './service';
 import * as t from './types';
 
 const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
@@ -16,7 +15,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       }
     }
   }, async (_req, rep) => {
-    const res = await s.getScreenings();
+    const res = await m.getScreenings();
 
     rep.ok(res);
   });
