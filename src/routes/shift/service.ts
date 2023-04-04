@@ -7,7 +7,7 @@ import * as m from './model';
 export async function createShift(from: Date, to: Date, requiredStaff: number): Promise<[Result, Shift | null]> {
   if (from > to)
     return [Result.ErrorInvalidTimeRange, null];
-  
+
   const shift = await m.createShift({
     shiftFrom: from, shiftTo: to, requiredStaff
   });

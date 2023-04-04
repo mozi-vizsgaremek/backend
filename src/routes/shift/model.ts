@@ -28,7 +28,7 @@ export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]>
   try {
     const res = await pool.many(sql.type(Shift)
       `SELECT * FROM shifts 
-       WHERE shift_from >= ${sql.date(from)} AND shift_to <= ${sql.date(to)}
+       WHERE shift_from >= ${sql.timestamp(from)} AND shift_to <= ${sql.date(to)}
        ORDER BY shift_from, (shift_to - shift_from) DESC`);
 
     return res.map(fixShift);
@@ -40,7 +40,7 @@ export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]>
 export async function createShift(shift: CreateShift): Promise<Shift> {
   const res = await pool.one(sql.type(Shift)
     `INSERT INTO shifts (shift_from, shift_to, required_staff) 
-     VALUES (${sql.date(shift.shiftFrom)}, ${sql.date(shift.shiftTo)}, ${shift.requiredStaff})
+     VALUES (${sql.timestamp(shift.shiftFrom)}, ${sql.timestamp(shift.shiftTo)}, ${shift.requiredStaff})
      RETURNING *`);
 
   return fixShift(res);
