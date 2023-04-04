@@ -25,12 +25,16 @@ export async function getShiftWithBookings(id: UUID): Promise<ShiftWithBookings 
 }
 
 export async function getShifts(from: Date, to: Date): Promise<readonly Shift[]> {
-  const res = await pool.many(sql.type(Shift)
-    `SELECT * FROM shifts 
-     WHERE shift_from >= ${sql.date(from)} AND shift_to <= ${sql.date(to)}
-     ORDER BY shift_from, (shift_to - shift_from) DESC`);
+  try {
+    const res = await pool.many(sql.type(Shift)
+      `SELECT * FROM shifts 
+       WHERE shift_from >= ${sql.date(from)} AND shift_to <= ${sql.date(to)}
+       ORDER BY shift_from, (shift_to - shift_from) DESC`);
 
-  return res.map(fixShift);
+    return res.map(fixShift);
+  } catch {
+    return [];
+  }
 }
 
 export async function createShift(shift: CreateShift): Promise<Shift> {
