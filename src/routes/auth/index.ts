@@ -27,7 +27,7 @@ export default (server: FastifyInstance, _opts: null, done: Function) => {
         () => rep.error(500, 'Unknown error occurred'))
       .with([Result.Ok, P.select()], 
         (tokens) => rep.ok({
-          refreshToken: tokens!.access,
+          refreshToken: tokens!.refresh,
           accessToken: tokens!.access
         }))
       .run();
