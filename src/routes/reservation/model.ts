@@ -19,6 +19,9 @@ export async function getScreeningReservationCount(screeningId: UUID): Promise<n
      WHERE p.id = ${screeningId}
      GROUP BY p.id`);
 
+  if (!count)
+    return 0;
+
   return unwrapCount(count);
 }
 

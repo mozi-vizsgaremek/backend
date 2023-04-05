@@ -58,7 +58,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
     const reservationCount = await m.getScreeningReservationCount(req.params.id);
     const screening = await as.getScreening(req.params.id);
 
-    if (!reservationCount || !screening)
+    if (reservationCount == null || !screening)
       return rep.error(404, 'No such screening');
 
     const aud = await am.getAuditorium(screening.auditoriumId);
