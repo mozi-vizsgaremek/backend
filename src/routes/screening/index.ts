@@ -52,7 +52,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       }
     }
   }, async (req, rep) => {
-    const res = await m.createScreening(req.body.movieId, 
+    const res = await m.createScreening(req.body.movieId,
       req.body.auditoriumId, 
       new Date(req.body.time));
 

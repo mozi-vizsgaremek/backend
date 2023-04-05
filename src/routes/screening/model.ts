@@ -30,10 +30,12 @@ export async function getScreenings(): Promise<readonly Screening[]> {
 }
 
 export async function createScreening(movieId: UUID, auditoriumId: UUID, time: Date): Promise<Screening> {
-  return pool.one(sql.type(Screening)
+  const res = await pool.one(sql.type(Screening)
     `INSERT INTO screenings (movie_id, auditorium_id, time) 
      VALUES (${movieId}, ${auditoriumId}, ${sql.date(time)})
      RETURNING *`);
+
+  return fixScreening(res);
 }
 
 export async function deleteScreening(id: UUID) {
