@@ -100,6 +100,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       }),
       response: {
         200: Type.Object({
+          movieId: UUID,
           bannerHash: Type.Optional(Base64String),
           bannerUrl: Type.Optional(Type.String()),
           thumbnailHash: Type.Optional(Base64String),
@@ -125,6 +126,8 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       resp[`${key}Hash`] = result[1];
       resp[`${key}Url`] = `${config.baseUrl}/u/${result[1]}`;
     }
+
+    resp['movieId'] = req.params.id;
 
     return rep.ok(resp);
   });
