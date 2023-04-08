@@ -49,8 +49,11 @@ export async function deleteMovie(id: UUID) {
 
   if (!movie) return;
 
-  await deleteImageFromDisk(movie.thumbnailPath);
-  await deleteImageFromDisk(movie.bannerPath);
+  if (movie.thumbnailPath)
+    await deleteImageFromDisk(movie.thumbnailPath);
+
+  if (movie.bannerPath)
+    await deleteImageFromDisk(movie.bannerPath);
 }
 
 export async function getImage(id: UUID, imgType: ImageType): Promise<[Result, string | null]> {
