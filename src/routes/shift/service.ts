@@ -21,7 +21,7 @@ export async function bookShift(user: User, shiftId: UUID): Promise<[Result, Tak
   if (shift == null)
     return [Result.ErrorShiftNotFound, null];
 
-  if (shift.bookedUsers.length >= shift.requiredStaff)
+  if (shift.bookedUsers.length > shift.requiredStaff)
     return [Result.ErrorShiftOverbooked, null];
 
   if (shift.bookedUsers.includes(user.id!))
