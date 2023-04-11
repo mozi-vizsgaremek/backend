@@ -6,6 +6,7 @@ import { saveImage } from './files';
 
 import * as f from './files';
 import { config } from '../../config';
+import { wrapListGetter } from '../../utils';
 
 function fixMovie(movie: Movie): MovieSchema {
   let movieSchema: MovieSchema = movie as MovieSchema;
@@ -30,6 +31,8 @@ export async function getMovies(): Promise<readonly MovieSchema[]> {
 
   return movies.map(x => fixMovie(x));
 }
+
+export const getScreeningsByMovie = wrapListGetter(m.getScreeningsByMovie);
 
 export function getImageUrl(hash: string): string {
   return `${config.baseUrl}/u/${hash}`;

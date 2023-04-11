@@ -48,6 +48,21 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       .run();
   });
 
+  server.get('/screenings/:id', {
+    schema: {
+      summary: 'Return all screenings for a given movie',
+      security: requireRole('customer'),
+      tags: [ 'movie', 'screening' ],
+      params: Type.Object({
+        id: UUID
+      })
+    }
+  }, async (req, rep) => {
+    const res = await s.getScreeningsByMovie(req.params.id);
+
+    return rep.ok(res);
+  });
+
   server.post('/', {
     schema: {
       summary: 'Create a new movie. Requires admin role',

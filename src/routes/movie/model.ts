@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { pool } from "../../pool";
 import { sql, UUID } from "../../types";
+import { Screening } from "../screening/types";
 import { Movie } from "./types";
 
 export async function getMovies(): Promise<readonly Movie[]> {
@@ -47,4 +48,9 @@ export async function imageUseCount(hash: string): Promise<number> {
   return (await pool.one(sql.typeAlias('count')
     `SELECT count(*) as count FROM movies 
      WHERE thumbnail_path = ${hash} OR banner_path = ${hash}`)).count;
+}
+
+export async function getScreeningsByMovie(movieId: UUID): Promise<readonly Screening[]> {
+  return pool.many(sql.type(Screening)
+    `SELECT * FROM screenings WHERE movieId = ${movieId}`);
 }
