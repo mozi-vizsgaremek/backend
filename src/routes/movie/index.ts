@@ -3,15 +3,15 @@ import { Type } from "@sinclair/typebox";
 import { match, P } from 'ts-pattern';
 import { Base64String, requireRole, UUID } from "../../types";
 
+import { config } from '../../config';
+import { ScreeningSchema } from '../screening/types';
 import { MovieServiceResult as Result } from './types';
 
 import * as m from './model';
 import * as s from './service';
 import * as t from './types';
-import { config } from '../../config';
 
-const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
-  
+const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {  
   server.get('/', {
     schema: {
       summary: 'Return a list of all movies',
@@ -55,7 +55,10 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       tags: [ 'movie', 'screening' ],
       params: Type.Object({
         id: UUID
-      })
+      }),
+      response: {
+        200: Type.Array(ScreeningSchema)
+      }
     }
   }, async (req, rep) => {
     const res = await s.getScreeningsByMovie(req.params.id);

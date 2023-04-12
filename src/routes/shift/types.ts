@@ -23,17 +23,33 @@ export const TakenShift = z.object({
 
 export type TakenShift = z.infer<typeof TakenShift>;
 
+export const TakenShiftSchema = Type.Object({
+  id: UUID,
+  shiftId: UUID,
+  userId: UUID
+})
+
 export const ShiftWithBookings = Shift.extend({
   bookedUsers: z.array(z.string().uuid())
 });
 
 export type ShiftWithBookings = z.infer<typeof ShiftWithBookings>;
 
-
 export const ExtendedTakenShift =
   TakenShift.extend(Shift.omit({ id: true }).shape);
 
 export type ExtendedTakenShift = z.infer<typeof ExtendedTakenShift>;
+
+export const ExtendedTakenShiftSchema = Type.Object({
+  id: UUID,
+  shiftFrom: DateTimeStr,
+  shiftTo: DateTimeStr,
+  requiredStaff: Type.Number(),
+  shiftId: UUID,
+  userId: UUID
+});
+
+export type ExtendedTakenShiftSchema = Static<typeof ExtendedTakenShiftSchema>;
 
 // schemas
 
@@ -115,9 +131,12 @@ export const DeleteBookingSchema = {
 export type DeleteBookingSchema = Static<typeof DeleteBookingSchema.params>;
 
 export const ListBookingsSchema = {
-  summary: "List user's upcoming shift bookings",
+  summary: "List user's upcoming shift bookings, requires employee role.",
   tags: [ 'booking' ],
-  security: requireRole('employee')
+  security: requireRole('employee'),
+  response: {
+    200: Type.Array(ExtendedTakenShiftSchema)
+  }
 }
 
 // Service result type

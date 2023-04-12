@@ -65,8 +65,18 @@ export async function deleteBooking(bookingId: UUID) {
 
 // REVIEW: to - from range like with getShifts?
 export async function getBookings(user: User): Promise<readonly ExtendedTakenShift[]> {
-  return await pool.many(sql.type(ExtendedTakenShift)
-    `SELECT *
-     FROM shifts_taken JOIN shifts ON shifts_taken.shift_id = shifts.id
-     WHERE user_id = ${user.id!} AND shift_to > now()`); // i'm using shift_to here so the current shift is still included
+  try {
+    const res = await pool.many(sql.type(ExtendedTakenShift)
+      `SELECT *
+       FROM shifts_taken JOIN shifts ON shifts_taken.shift_id = shifts.id
+       WHERE user_id = ${user.id!} AND shift_to > now()`); // i'm using shift_to here so the current shift is still included
+
+    return res.map(x => ({
+      ...x,
+      shiftFrom: new Date(x.shiftFrom),
+      shiftTo: new Date(x.shiftTo)
+    }));
+  } catch {
+    return [];
+  }
 }
