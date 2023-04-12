@@ -52,5 +52,5 @@ export async function imageUseCount(hash: string): Promise<number> {
 
 export async function getScreeningsByMovie(movieId: UUID): Promise<readonly Screening[]> {
   return pool.many(sql.type(Screening)
-    `SELECT * FROM screenings WHERE movieId = ${movieId}`);
+    `SELECT * FROM screenings WHERE movie_id = ${movieId}`);
 }
