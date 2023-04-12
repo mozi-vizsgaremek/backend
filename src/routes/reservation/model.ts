@@ -3,6 +3,13 @@ import { sql, UUID } from "../../types";
 import { unwrapCount } from "../../utils";
 import { Reservation } from "./types";
 
+function fixReservation(res: Reservation): Reservation {
+  return {
+    ...res,
+    purchaseTime: new Date(res.purchaseTime)
+  }
+}
+
 export async function createReservation(screeningId: UUID, userId: UUID): Promise<Reservation> {
   return await pool.one(sql.type(Reservation)
     `INSERT INTO reservations (screening_id, user_id, purchase_time)
@@ -36,8 +43,14 @@ export async function getReservation(reservationId: UUID): Promise<Reservation |
 }
 
 export async function getReservations(userId: UUID): Promise<readonly Reservation[]> {
-  return await pool.many(sql.type(Reservation)
-    `SELECT * FROM reservations WHERE user_id = ${userId}`);
+  try {
+    const res = await pool.many(sql.type(Reservation)
+      `SELECT * FROM reservations WHERE user_id = ${userId}`);
+
+    return res.map(x => fixReservation(x));
+  } catch {
+    return [];
+  }
 }
 
 export async function getAllReservations(): Promise<readonly Reservation[]> {
