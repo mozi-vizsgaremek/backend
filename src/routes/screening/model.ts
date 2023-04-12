@@ -2,7 +2,7 @@ import { pool } from "../../pool";
 import { sql, UUID } from "../../types";
 import { Screening } from "./types";
 
-function fixScreening(screening: Screening): Screening {
+export function fixScreening(screening: Screening): Screening {
   return {
     ...screening,
     time: new Date(screening.time)

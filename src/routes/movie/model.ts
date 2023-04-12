@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { pool } from "../../pool";
 import { sql, UUID } from "../../types";
+import { fixScreening } from "../screening/model";
 import { Screening } from "../screening/types";
 import { Movie } from "./types";
 
@@ -51,6 +52,12 @@ export async function imageUseCount(hash: string): Promise<number> {
 }
 
 export async function getScreeningsByMovie(movieId: UUID): Promise<readonly Screening[]> {
-  return pool.many(sql.type(Screening)
-    `SELECT * FROM screenings WHERE movie_id = ${movieId}`);
+  try {
+    const res = await pool.many(sql.type(Screening)
+      `SELECT * FROM screenings WHERE movie_id = ${movieId}`);
+
+    return res.map(x => fixScreening(x));
+  } catch {
+    return [];
+  }
 }
