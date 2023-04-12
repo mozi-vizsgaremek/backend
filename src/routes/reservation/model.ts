@@ -1,13 +1,23 @@
 import { pool } from "../../pool";
 import { sql, UUID } from "../../types";
 import { unwrapCount } from "../../utils";
-import { Reservation } from "./types";
+import { Reservation, ReservationWithMovie, ReservationWithMovieSchema } from "./types";
 
 function fixReservation(res: Reservation): Reservation {
   return {
     ...res,
     purchaseTime: new Date(res.purchaseTime)
   }
+}
+
+function fixReservationWithMovie(res: ReservationWithMovie): ReservationWithMovie {
+  const fixedRes = fixReservation(res);
+
+  return {
+    ...fixedRes,
+    title: res.title,
+    time: new Date(res.time)
+  };
 }
 
 export async function createReservation(screeningId: UUID, userId: UUID): Promise<Reservation> {
@@ -49,6 +59,22 @@ export async function getReservations(userId: UUID): Promise<readonly Reservatio
 
     return res.map(x => fixReservation(x));
   } catch {
+    return [];
+  }
+}
+
+export async function getReservationsWithMovies(userId: UUID): Promise<readonly ReservationWithMovie[]> {
+  try {
+    const res = await pool.many(sql.type(ReservationWithMovie)
+      `SELECT r.*, m.title, s.time FROM reservations r
+       JOIN screenings s ON r.screening_id = s.id
+       JOIN movies m ON s.movie_id = m.id
+       WHERE user_id = ${userId}`);
+
+    return res.map(x => fixReservationWithMovie(x));
+  } catch (err) {
+    console.log(err);
+
     return [];
   }
 }

@@ -15,11 +15,11 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       security: requireRole('customer'),
       tags: [ 'reservation' ],
       response: {
-        200: Type.Array(t.ReservationSchema)
+        200: Type.Array(t.ReservationWithMovieSchema)
       }
     }
   }, async (req, rep) => {
-    const res = await s.getReservations(req.user.id!);
+    const res = await m.getReservationsWithMovies(req.user.id!);
 
     return rep.ok(res);
   });
