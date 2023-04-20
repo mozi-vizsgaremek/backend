@@ -13,7 +13,7 @@ export async function getScreening(id: UUID): Promise<Screening | null> {
   const res = await pool.maybeOne(sql.type(Screening)
     `SELECT s.*, title as movie_title
      FROM screenings s JOIN movies m ON s.movie_id = m.id
-     WHERE id = ${id}`);
+     WHERE s.id = ${id}`);
 
   if (!res) return null;
 
