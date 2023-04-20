@@ -11,7 +11,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
       summary: 'List all screenings',
       tags: [ 'screening' ],
       response: {
-        200: Type.Array(t.ScreeningSchema)
+        200: Type.Array(t.ScreeningWithMovieSchema)
       }
     }
   }, async (_req, rep) => {
@@ -28,7 +28,7 @@ const plugin: FastifyPluginAsyncTypebox = async (server, opts) => {
         id: UUID
       }),
       response: {
-        200: Type.Array(t.ScreeningSchema)
+        200: Type.Array(t.ScreeningWithMovieSchema)
       }
     }
   }, async (req, rep) => {
