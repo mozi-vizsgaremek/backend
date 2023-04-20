@@ -14,6 +14,7 @@ export type Screening = z.infer<typeof Screening>;
 export const ScreeningSchema = Type.Object({
   id: UUID,
   movieId: UUID,
+  movieTitle: Type.String(),
   auditoriumId: UUID,
   time: DateTimeStr
 });

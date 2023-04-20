@@ -11,7 +11,9 @@ export function fixScreening(screening: Screening): Screening {
 
 export async function getScreening(id: UUID): Promise<Screening | null> {
   const res = await pool.maybeOne(sql.type(Screening)
-    `SELECT * FROM screenings WHERE id = ${id}`);
+    `SELECT s.*, title as movie_title
+     FROM screenings s JOIN movies m ON s.movie_id = m.id
+     WHERE id = ${id}`);
 
   if (!res) return null;
 
@@ -21,7 +23,8 @@ export async function getScreening(id: UUID): Promise<Screening | null> {
 export async function getScreenings(): Promise<readonly Screening[]> {
   try {
     const res = await pool.many(sql.type(Screening)
-      `SELECT * FROM screenings`);
+      `SELECT s.*, title as movie_title
+       FROM screenings s JOIN movies m ON s.movie_id = m.id`);
 
     return res.map(x => fixScreening(x));
   } catch {
